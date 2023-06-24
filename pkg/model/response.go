@@ -13,13 +13,13 @@ type Response struct {
 	Status      int
 }
 
-func (r Response) Json() Response {
+func (r *Response) Json() *Response {
 	r.ContentType = constants.HEADER_APPLICATION_JSON
 	r.Status = http.StatusOK
 	return r
 }
 
-func (r Response) Write(rw http.ResponseWriter) {
+func (r *Response) Write(rw http.ResponseWriter) {
 	rw.Header().Set(constants.HEADER_CONTENT_TYPE_KEY, constants.HEADER_APPLICATION_JSON)
 
 	b, _ := json.Marshal(r.Body)

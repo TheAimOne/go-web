@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:11.1
+    container_name: postgres_container
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: api
+      POSTGRES_DB: database_dummy
+      POSTGRES_PASS: password
+    expose:
+      - 5432

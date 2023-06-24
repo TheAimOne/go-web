@@ -6,9 +6,10 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/go-web/constants"
 	"github.com/go-web/endpoint"
 	"github.com/go-web/middleware"
-	"github.com/go-web/model"
+	"github.com/go-web/pkg/model"
 )
 
 type Server struct {
@@ -83,6 +84,7 @@ func (s *Server) WriteError(err error, rw http.ResponseWriter) {
 		status = e.Status
 	}
 
+	rw.Header().Set(constants.HEADER_CONTENT_TYPE_KEY, constants.HEADER_APPLICATION_JSON)
 	rw.WriteHeader(status)
 	rw.Write([]byte(b))
 }

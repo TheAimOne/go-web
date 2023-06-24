@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: redis
+    container_name: redis_container
+    ports:
+      - 6379:6379
+    command: redis-server --save ""
+    volumes:
+      - ./redisdb:/data
