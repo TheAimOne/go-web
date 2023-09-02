@@ -1,6 +1,7 @@
 package function
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
@@ -10,6 +11,9 @@ import (
 
 type DBFunction interface {
 	Insert(table string, columns []string, values []interface{}) error
+	SelectAll(table, condition string, columns []string) (*sql.Rows, error)
+	Select(table, condition string, columns []string) (*sql.Row, error)
+	SelectRaw(query string) (*sql.Rows, error)
 }
 
 func NewDBFunction() DBFunction {
@@ -49,4 +53,32 @@ func columnHelper(columns []string) (string, string, error) {
 	}
 
 	return column, values, nil
+}
+
+func (f *functionImpl) SelectAll(table, condition string, columns []string) (*sql.Rows, error) {
+	columnString, _, err := columnHelper(columns)
+	if err != nil {
+		return nil, constants.ErrorCreatingSql
+	}
+
+	rows, err := connection.DB.Query(fmt.Sprintf("select %s from %s %s", columnString, table, condition))
+
+	return rows, nil
+}
+
+func (f *functionImpl) Select(table, condition string, columns []string) (*sql.Row, error) {
+	columnString, _, err := columnHelper(columns)
+	if err != nil {
+		return nil, constants.ErrorCreatingSql
+	}
+
+	rows := connection.DB.QueryRow(fmt.Sprintf("select %s from %s %s", columnString, table, condition))
+
+	return rows, nil
+}
+
+func (f *functionImpl) SelectRaw(query string) (*sql.Rows, error) {
+	rows, err := connection.DB.Query(query)
+
+	return rows, err
 }

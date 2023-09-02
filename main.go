@@ -5,11 +5,8 @@ import (
 	"net/http"
 
 	"github.com/go-web/database/connection"
-	"github.com/go-web/database/function"
 	"github.com/go-web/endpoint"
 	"github.com/go-web/pkg/handler"
-	"github.com/go-web/pkg/repository"
-	"github.com/go-web/pkg/service"
 	"github.com/go-web/server"
 )
 
@@ -18,16 +15,27 @@ func main() {
 	s.AddHandler(endpoint.Endpoint{
 		Path:    "/events",
 		Method:  "POST",
-		Handler: handler.EventHandler,
+		Handler: handler.CreateEventHandler,
+	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/groups/events",
+		Method:  "GET",
+		Handler: handler.GetEventByGroupIdHandler,
+	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/events/members",
+		Method:  "POST",
+		Handler: handler.CreateEventMemberHandler,
+	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/events/members",
+		Method:  "GET",
+		Handler: handler.GetEventMembers,
 	})
 
 	connection.InitDB()
-	dbFunction := function.NewDBFunction()
-	eventRepository := repository.NewEventRepository(dbFunction)
 
-	service := service.NewEventService(eventRepository)
-
-	handler.InititializeService(service)
+	handler.InititializeService()
 
 	s.Start()
 	log.Fatal(http.ListenAndServe(":8080", nil))

@@ -36,3 +36,20 @@ func (e *eventImpl) CreateEvent(requestEvent *eventModel.Event) (*eventModel.Eve
 		Status:  requestEvent.Status,
 	}, nil
 }
+
+func (e *eventImpl) GetEventsByGroupId(eventRequest *eventModel.GetEventRequest) (*eventModel.GetEventResponse, error) {
+
+	groupId := eventRequest.GroupId
+
+	result, err := e.EventRepository.GetEventsByGroupId(groupId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	response := &eventModel.GetEventResponse{}
+
+	response.Data = result
+
+	return response, nil
+}
