@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/go-web/database/connection"
+	"github.com/go-web/database/connection"xs
 	"github.com/go-web/endpoint"
 	"github.com/go-web/pkg/handler"
 	"github.com/go-web/server"

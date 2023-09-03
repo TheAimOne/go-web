@@ -1,8 +1,11 @@
 package service
 
 import (
+	model "github.com/go-web/model"
+	"github.com/go-web/pkg/model"
 	eventModel "github.com/go-web/pkg/model/event"
 	memberModel "github.com/go-web/pkg/model/member"
+	venueModel "github.com/go-web/pkg/model/venue"
 	"github.com/go-web/pkg/repository"
 	"github.com/go-web/pkg/repository/member"
 )
@@ -27,4 +30,13 @@ func NewEventMemberService(eventRepository member.EventMemberRepository) EventMe
 	return &eventMemberImpl{
 		eventRepository,
 	}
+}
+
+type VenueService interface {
+	CreateVenue(venueRequest *venueModel.Venue) (*venueModel.Venue, error)
+	GetVenues(request *model.Filter) (*venueModel.GetVenueResponse, error)
+}
+
+func NewVenueService() VenueService {
+	return nil
 }
