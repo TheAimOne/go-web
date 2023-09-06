@@ -34,7 +34,7 @@ func main() {
 	})
 	s.AddHandler(endpoint.Endpoint{
 		Path:    "/venues",
-		Method:  "GET",
+		Method:  "POST",
 		Handler: handler.GetVenueHandler,
 	})
 	s.AddHandler(endpoint.Endpoint{

@@ -10,9 +10,9 @@ type Venue struct {
 	Longitude   string    `json:"longitude"`
 	OpeningTime string    `json:"openingTime"`
 	ClosingTime string    `json:"closingTime"`
-	Rating      int64     `json:"rating"`
+	Rating      int32     `json:"rating"`
 }
 
 type GetVenueResponse struct {
-	Venues []*Venue
+	Venues []*Venue `json:"venues"`
 }

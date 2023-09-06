@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/go-web/database/connection"
 	database_util "github.com/go-web/database/util"
@@ -76,7 +77,7 @@ func (f *functionImpl) SelectPaginateAndFilter(table string, filter model.Filter
 		return nil, constants.ErrorCreatingSql
 	}
 
-	pageString := fmt.Sprintf("limit %s offset %s", filter.PageSize, filter.StartsWith)
+	pageString := fmt.Sprintf("limit %s offset %s", strconv.FormatInt(filter.PageSize, 10), strconv.FormatInt(filter.StartsWith, 10))
 
 	sortString := ""
 
@@ -87,7 +88,7 @@ func (f *functionImpl) SelectPaginateAndFilter(table string, filter model.Filter
 		sortString = fmt.Sprintf("order by %s %s", filter.SortKey, filter.SortDirection)
 	}
 
-	rows, err := connection.DB.Query(fmt.Sprintf("select %s from %s %s %s %s", columnString, table, sortString, pageString))
+	rows, err := connection.DB.Query(fmt.Sprintf("select %s from %s %s %s", columnString, table, sortString, pageString))
 
 	return rows, err
 }

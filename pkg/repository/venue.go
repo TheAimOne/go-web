@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"log"
+
 	"github.com/go-web/database/function"
 	"github.com/go-web/pkg/constants"
 	"github.com/go-web/pkg/model"
@@ -52,6 +54,7 @@ func (v *VenueRepoImpl) GetVenues(filter *model.Filter) ([]*venueModel.Venue, er
 	rows, err := v.DB.SelectPaginateAndFilter(venueTableName, *filter, venueColumns)
 
 	if err != nil {
+		log.Println(err)
 		return nil, constants.ErrorReadingFromDB
 	}
 	if rows == nil {
