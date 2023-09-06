@@ -27,7 +27,7 @@ type functionImpl struct {
 }
 
 func (f *functionImpl) Insert(table string, columns []string, values []interface{}) error {
-	columnString, valueString, err := columnHelper(columns)
+	columnString, valueString, err := database_util.ColumnHelper(columns)
 
 	if err != nil || len(columns) != len(values) {
 		return constants.ErrorCreatingSql

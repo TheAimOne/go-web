@@ -35,3 +35,10 @@ func ReadJson[T any](request interface{}, object T) (*T, error) {
 	}
 	return &object, nil
 }
+
+func GetResponse(resp interface{}) *model.Response {
+	response := model.Response{
+		Body: resp,
+	}
+	return response.Json()
+}

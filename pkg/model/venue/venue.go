@@ -14,5 +14,5 @@ type Venue struct {
 }
 
 type GetVenueResponse struct {
-	venues []*Venue
+	Venues []*Venue
 }

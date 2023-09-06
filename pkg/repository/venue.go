@@ -10,15 +10,17 @@ import (
 
 const venueTableName = "venue"
 
-const venueColumns = []string{"venue_id", "name", "address", "latitude", "longitude", "opening_time", "closing_time", "rating"}
+var venueColumns = []string{"venue_id", "name", "address", "latitude", "longitude", "opening_time", "closing_time", "rating"}
 
 type VenueRepository interface {
 	CreateVenue(*venueModel.Venue) error
-	GetVenues(*model.Filter) (*venueModel.GetVenueResponse, error)
+	GetVenues(*model.Filter) ([]*venueModel.Venue, error)
 }
 
 func NewVenueRepository(DB function.DBFunction) VenueRepository {
-
+	return &VenueRepoImpl{
+		DB: DB,
+	}
 }
 
 type VenueRepoImpl struct {
@@ -44,10 +46,10 @@ func (v *VenueRepoImpl) CreateVenue(venue *venueModel.Venue) error {
 	return err
 }
 
-func (v *VenueRepoImpl) GetVenues(filter *model.Filter) (*venueModel.GetVenueResponse, error) {
+func (v *VenueRepoImpl) GetVenues(filter *model.Filter) ([]*venueModel.Venue, error) {
 	result := make([]*venueModel.Venue, 0)
 
-	rows, err := v.DB.SelectPaginateAndFilter(venueTableName, *filter, columns)
+	rows, err := v.DB.SelectPaginateAndFilter(venueTableName, *filter, venueColumns)
 
 	if err != nil {
 		return nil, constants.ErrorReadingFromDB
@@ -56,4 +58,11 @@ func (v *VenueRepoImpl) GetVenues(filter *model.Filter) (*venueModel.GetVenueRes
 		return nil, constants.ErrorNoRecordsInDB
 	}
 
+	for rows.Next() {
+		var venue venueModel.Venue
+		rows.Scan(&venue.Id, &venue.Name, &venue.Address, &venue.Latitude, &venue.Longitude, &venue.OpeningTime, &venue.ClosingTime, &venue.Rating)
+		result = append(result, &venue)
+	}
+
+	return result, nil
 }

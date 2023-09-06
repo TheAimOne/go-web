@@ -1,7 +1,6 @@
 package database_util
 
 import (
-	"database/sql"
 	"fmt"
 )
 
@@ -19,8 +18,4 @@ func ColumnHelper(columns []string) (string, string, error) {
 	}
 
 	return column, values, nil
-}
-
-func ScanRows(rows *sql.Rows) {
-
 }
