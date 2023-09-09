@@ -26,4 +26,5 @@ type Criteria struct {
 	Key      string   `json:"key"`
 	Operator Operator `json:"operator"`
 	Value    string   `json:"value"`
+	Values   []string `json:"values"`
 }

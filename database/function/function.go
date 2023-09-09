@@ -17,7 +17,7 @@ type DBFunction interface {
 	SelectAll(table, condition string, columns []string) (*sql.Rows, error)
 	Select(table, condition string, columns []string) (*sql.Row, error)
 	SelectRaw(query string) (*sql.Rows, error)
-	SelectPaginateAndFilter(table string, filter model.Filter, columns []string) (*sql.Rows, error)
+	SelectPaginateAndFilter(table string, filter model.Filter, columns []string, filterMap map[string]string) (*sql.Rows, error)
 }
 
 func NewDBFunction() DBFunction {
@@ -71,7 +71,7 @@ func (f *functionImpl) SelectRaw(query string) (*sql.Rows, error) {
 	return rows, err
 }
 
-func (f *functionImpl) SelectPaginateAndFilter(table string, filter model.Filter, columns []string) (*sql.Rows, error) {
+func (f *functionImpl) SelectPaginateAndFilter(table string, filter model.Filter, columns []string, filterMap map[string]string) (*sql.Rows, error) {
 	columnString, _, err := database_util.ColumnHelper(columns)
 	if err != nil {
 		return nil, constants.ErrorCreatingSql
@@ -88,7 +88,9 @@ func (f *functionImpl) SelectPaginateAndFilter(table string, filter model.Filter
 		sortString = fmt.Sprintf("order by %s %s", filter.SortKey, filter.SortDirection)
 	}
 
-	rows, err := connection.DB.Query(fmt.Sprintf("select %s from %s %s %s", columnString, table, sortString, pageString))
+	whereCondition := database_util.AddWhereCondition(filterMap, &filter)
+
+	rows, err := connection.DB.Query(fmt.Sprintf("select %s from %s %s %s %s", columnString, table, whereCondition, sortString, pageString))
 
 	return rows, err
 }

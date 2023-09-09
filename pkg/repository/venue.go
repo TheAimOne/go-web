@@ -13,6 +13,13 @@ import (
 const venueTableName = "venue"
 
 var venueColumns = []string{"venue_id", "name", "address", "latitude", "longitude", "opening_time", "closing_time", "rating"}
+var filterMap = map[string]string{
+	"NAME":         "name",
+	"ADDRESS":      "address",
+	"RATING":       "rating",
+	"OPENING_TIME": "opening_time",
+	"CLOSING_TIME": "closing_time",
+}
 
 type VenueRepository interface {
 	CreateVenue(*venueModel.Venue) error
@@ -51,7 +58,7 @@ func (v *VenueRepoImpl) CreateVenue(venue *venueModel.Venue) error {
 func (v *VenueRepoImpl) GetVenues(filter *model.Filter) ([]*venueModel.Venue, error) {
 	result := make([]*venueModel.Venue, 0)
 
-	rows, err := v.DB.SelectPaginateAndFilter(venueTableName, *filter, venueColumns)
+	rows, err := v.DB.SelectPaginateAndFilter(venueTableName, *filter, venueColumns, filterMap)
 
 	if err != nil {
 		log.Println(err)
