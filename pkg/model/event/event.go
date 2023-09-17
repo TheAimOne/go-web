@@ -30,7 +30,7 @@ type GetEventRequest struct {
 }
 
 type GetEventResponse struct {
-	Data []*Event `json:"eventId"`
+	Data []*Event `json:"data"`
 }
 
 type AddMemberToEventRequest struct {

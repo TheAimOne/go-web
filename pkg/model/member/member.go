@@ -25,5 +25,5 @@ type GetEventMembersRequest struct {
 }
 
 type GetEventMembersResponse struct {
-	Members []*EventMember `json:"eventId"`
+	Members []*EventMember `json:"data"`
 }

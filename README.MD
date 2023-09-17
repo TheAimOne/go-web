@@ -24,3 +24,14 @@ curl --location --request POST 'localhost:8080/events' \
 }'
 
 ```
+
+
+## Generating mocks
+
+```
+mockery --all --keeptree
+```
+
+```
+go test -v ./...
+```

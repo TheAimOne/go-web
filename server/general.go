@@ -46,6 +46,21 @@ func (s *Server) Handle() http.Handler {
 		log.Println("Path : ", r.URL.Path)
 		log.Println("Method : ", r.Method)
 
+		// TODO
+		// Handle cors
+		if r.Method == "OPTIONS" {
+			b, _ := json.Marshal(model.Error{
+				Message: "Invalid route",
+				Status:  200,
+			})
+			rw.Header().Set("Access-Control-Allow-Origin", "*")
+			rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+			rw.Header().Set("Access-Control-Allow-Methods", "*")
+			rw.WriteHeader(http.StatusOK)
+			rw.Write([]byte(b))
+			return
+		}
+
 		key := s.CreateKey(r.URL.Path, r.Method)
 
 		handler, ok := s.endpoints[key]
