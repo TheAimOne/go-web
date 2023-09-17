@@ -23,4 +23,7 @@ var (
 	ErrorGettingEventMembers = errors.New("Error getting event members")
 	ErrorCreatingVenue       = errors.New("Error creating Venue")
 	ErrorGettingVenues       = errors.New("Error Getting Venues")
+
+	ErrorCreatingGroup        = errors.New("Error Creating Group")
+	ErrorCreatingGroupMembers = errors.New("Error Creating Group Members")
 )

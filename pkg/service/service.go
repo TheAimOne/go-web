@@ -3,6 +3,7 @@ package service
 import (
 	model "github.com/go-web/pkg/model"
 	eventModel "github.com/go-web/pkg/model/event"
+	groupModel "github.com/go-web/pkg/model/group"
 	memberModel "github.com/go-web/pkg/model/member"
 	venueModel "github.com/go-web/pkg/model/venue"
 	"github.com/go-web/pkg/repository"
@@ -39,5 +40,19 @@ type VenueService interface {
 func NewVenueService(venueRepository repository.VenueRepository) VenueService {
 	return &VenueImpl{
 		venueRepository,
+	}
+}
+
+type GroupService interface {
+	CreateGroupWithMembers(group *groupModel.CreateGroupModel) (*groupModel.CreateGroupModel, error)
+	AddMembersToGroup(groupMember []*groupModel.GroupMember) ([]*groupModel.GroupMember, error)
+	GetGroup(groupId string) (*groupModel.Group, error)
+	GetMembersByGroupId(groupId string) ([]*groupModel.GroupMember, error)
+	GetGroupsByMemberId(memberId string) ([]*groupModel.Group, error)
+}
+
+func NewGroupService(groupRepository repository.GroupRepository) GroupService {
+	return &GroupImpl{
+		groupRepository: groupRepository,
 	}
 }

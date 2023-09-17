@@ -10,6 +10,7 @@ type Event struct {
 	Id          int64       `json:"id"`
 	EventId     uuid.UUID   `json:"eventId"`
 	GroupId     uuid.UUID   `json:"groupId"`
+	VenueId     uuid.UUID   `json:"venueId"`
 	CreatorId   uuid.UUID   `json:"creatorId"`
 	Name        string      `json:"name"`
 	Type        string      `json:"type"`
