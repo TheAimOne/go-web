@@ -36,6 +36,7 @@ func (f *functionImpl) Insert(table string, columns []string, values []interface
 
 	sql := fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s)", table, columnString, valueString)
 
+	log.Println(sql)
 	result, err := connection.DB.Exec(sql, values...)
 
 	log.Println(result)
@@ -57,6 +58,7 @@ func (f *functionImpl) SelectAll(table, condition string, columns []string) (*sq
 func (f *functionImpl) Select(table, condition string, columns []string) (*sql.Row, error) {
 	columnString, _, err := database_util.ColumnHelper(columns)
 	if err != nil {
+		log.Println(err)
 		return nil, constants.ErrorCreatingSql
 	}
 

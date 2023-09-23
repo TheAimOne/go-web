@@ -5,6 +5,7 @@ import (
 	eventModel "github.com/go-web/pkg/model/event"
 	groupModel "github.com/go-web/pkg/model/group"
 	memberModel "github.com/go-web/pkg/model/member"
+	userModel "github.com/go-web/pkg/model/user"
 	venueModel "github.com/go-web/pkg/model/venue"
 	"github.com/go-web/pkg/repository"
 	"github.com/go-web/pkg/repository/member"
@@ -54,5 +55,16 @@ type GroupService interface {
 func NewGroupService(groupRepository repository.GroupRepository) GroupService {
 	return &GroupImpl{
 		groupRepository: groupRepository,
+	}
+}
+
+type UserService interface {
+	CreateUser(user *userModel.UserBase) (*userModel.User, error)
+	GetUserByMemberId(memberId string) (*userModel.User, error)
+}
+
+func NewUserService(userRepository repository.UserRepository) UserService {
+	return &UserImpl{
+		userRepository: userRepository,
 	}
 }

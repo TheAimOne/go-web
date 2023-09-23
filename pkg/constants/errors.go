@@ -26,4 +26,7 @@ var (
 
 	ErrorCreatingGroup        = errors.New("Error Creating Group")
 	ErrorCreatingGroupMembers = errors.New("Error Creating Group Members")
+
+	ErrorGettingUser  = errors.New("Error Getting User")
+	ErrorCreatingUser = errors.New("Error Creating User")
 )

@@ -1,6 +1,9 @@
 package model
 
-import uuid "github.com/satori/go.uuid"
+import (
+	"github.com/go-web/pkg/model"
+	uuid "github.com/satori/go.uuid"
+)
 
 type Venue struct {
 	Id          uuid.UUID `json:"id"`
@@ -11,6 +14,7 @@ type Venue struct {
 	OpeningTime string    `json:"openingTime"`
 	ClosingTime string    `json:"closingTime"`
 	Rating      int32     `json:"rating"`
+	model.Audit
 }
 
 type GetVenueResponse struct {

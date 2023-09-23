@@ -43,6 +43,17 @@ func main() {
 		Handler: handler.CreateVenueHandler,
 	})
 
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/user",
+		Method:  "POST",
+		Handler: handler.CreateUserHandler,
+	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/user",
+		Method:  "GET",
+		Handler: handler.GetUserByIdHandler,
+	})
+
 	connection.InitDB()
 
 	handler.InititializeService()

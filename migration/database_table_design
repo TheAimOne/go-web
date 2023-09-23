@@ -1,4 +1,4 @@
-CREATE TABLE member (
+CREATE TABLE user (
     id SERIAL,
     member_id UUID UNIQUE,
     mobile VARCHAR(20) NOT NULL UNIQUE,
