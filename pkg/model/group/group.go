@@ -17,10 +17,30 @@ type GroupMember struct {
 	GroupId  uuid.UUID `json:"groupId"`
 	MemberId uuid.UUID `json:"memberId"`
 	IsAdmin  bool      `json:"isAdmin"`
+	Status   string    `json:"status"`
 	model.Audit
+}
+
+type AddMembersToGroupRequest struct {
+	GroupId uuid.UUID      `json:"groupId"`
+	Members []*GroupMember `json:"members"`
 }
 
 type CreateGroupModel struct {
 	GroupInfo Group          `json:"groupInfo"`
 	Members   []*GroupMember `json:"members"`
 }
+
+type GroupMemberByIdResponse struct {
+	MemberId  uuid.UUID `json:"memberId"`
+	Name      string    `json:"name"`
+	ShortName string    `json:"shortName"`
+	Mobile    string    `json:"mobile"`
+	Email     string    `json:"email"`
+	IsAdmin   bool      `json:"isAdmin"`
+	Status    string    `json:"status"`
+}
+
+const (
+	ACTIVE = "ACTIVE"
+)

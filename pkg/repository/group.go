@@ -2,13 +2,13 @@ package repository
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/go-web/database/function"
 	model "github.com/go-web/pkg/model/group"
-	uuid "github.com/satori/go.uuid"
 )
 
-const groupTableName = "group"
+const groupTableName = `"group"`
 const groupMemberTableName = "group_member"
 
 var groupColumns = []string{
@@ -16,14 +16,14 @@ var groupColumns = []string{
 }
 
 var groupMemberColumns = []string{
-	"group_id", "member_id", "is_admin",
+	"group_id", "member_id", "is_admin", "status",
 }
 
 type GroupRepository interface {
 	CreateGroup(group *model.Group) error
 	AddMembersToGroup(groupMember []*model.GroupMember) error
 	GetGroupById(groupId string) (*model.Group, error)
-	GetMembersByGroupId(groupId string) ([]*model.GroupMember, error)
+	GetMembersByGroupId(groupId string) ([]*model.GroupMemberByIdResponse, error)
 	GetGroupsByMemberId(memberId string) ([]*model.Group, error)
 }
 
@@ -38,9 +38,6 @@ type groupRepoImpl struct {
 }
 
 func (g *groupRepoImpl) CreateGroup(group *model.Group) error {
-	if group.GroupId == uuid.Nil {
-		group.GroupId = uuid.NewV4()
-	}
 
 	values := []interface{}{
 		group.GroupId,
@@ -48,6 +45,7 @@ func (g *groupRepoImpl) CreateGroup(group *model.Group) error {
 		group.Description,
 		group.Size,
 	}
+	log.Println(values...)
 
 	err := g.DB.Insert(groupTableName, groupColumns, values)
 	return err
@@ -59,10 +57,12 @@ func (g *groupRepoImpl) AddMembersToGroup(groupMembers []*model.GroupMember) err
 			groupMember.GroupId,
 			groupMember.MemberId,
 			groupMember.IsAdmin,
+			groupMember.Status,
 		}
 
 		err := g.DB.Insert(groupMemberTableName, groupMemberColumns, values)
 		if err != nil {
+			log.Println(err)
 			return err
 		}
 	}
@@ -82,12 +82,48 @@ func (g *groupRepoImpl) GetGroupById(groupId string) (*model.Group, error) {
 }
 
 // TO-DO
-func (g *groupRepoImpl) GetMembersByGroupId(groupId string) ([]*model.GroupMember, error) {
+func (g *groupRepoImpl) GetMembersByGroupId(groupId string) ([]*model.GroupMemberByIdResponse, error) {
+	query := `SELECT u.member_id, u."name", u.short_name, u.email, u.mobile, gm.status, gm.is_admin 
+	FROM "user" u INNER JOIN group_member gm ON gm.member_id = u.member_id 
+	INNER JOIN "group" g ON g.group_id = gm.group_id where g.group_id = '%s'`
 
-	return nil, nil
+	rows, err := g.DB.SelectRaw(fmt.Sprintf(query, groupId))
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	result := make([]*model.GroupMemberByIdResponse, 0)
+
+	for rows.Next() {
+		var groupMember model.GroupMemberByIdResponse
+		rows.Scan(&groupMember.MemberId, &groupMember.Name, &groupMember.ShortName, &groupMember.Email,
+			&groupMember.Mobile, &groupMember.Status, &groupMember.IsAdmin)
+		result = append(result, &groupMember)
+	}
+
+	return result, nil
 }
 
 // TO-DO
 func (g *groupRepoImpl) GetGroupsByMemberId(memberId string) ([]*model.Group, error) {
-	return nil, nil
+	query := `select g.group_id, g.name, g.description, g.size
+	from "group" g inner join group_member gm 
+	on gm.group_id = g.group_id where gm.member_id = '%s' `
+
+	rows, err := g.DB.SelectRaw(fmt.Sprintf(query, memberId))
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	result := make([]*model.Group, 0)
+
+	for rows.Next() {
+		var group model.Group
+		rows.Scan(&group.GroupId, &group.Name, &group.Description, &group.Size)
+		result = append(result, &group)
+	}
+
+	return result, nil
 }

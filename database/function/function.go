@@ -61,6 +61,7 @@ func (f *functionImpl) Select(table, condition string, columns []string) (*sql.R
 		log.Println(err)
 		return nil, constants.ErrorCreatingSql
 	}
+	log.Println(fmt.Sprintf("select %s from %s %s", columnString, table, condition))
 
 	rows := connection.DB.QueryRow(fmt.Sprintf("select %s from %s %s", columnString, table, condition))
 

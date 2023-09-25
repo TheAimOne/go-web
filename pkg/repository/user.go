@@ -9,7 +9,7 @@ import (
 	model "github.com/go-web/pkg/model/user"
 )
 
-const userTableName = "pl_user"
+const userTableName = `"user"`
 
 var userTableColumns = []string{"member_id", "name", "short_name", "email", "mobile", "status"}
 
@@ -44,7 +44,7 @@ func (u *UserRepoImpl) CreateUser(user model.User) error {
 }
 
 func (u *UserRepoImpl) GetUserByMemberId(memberId string) (*model.User, error) {
-	row, err := u.DB.Select(userTableName, fmt.Sprintf(" member_id = %s", memberId), userTableColumns)
+	row, err := u.DB.Select(userTableName, fmt.Sprintf(" where member_id = '%s'", memberId), userTableColumns)
 	if err != nil {
 		log.Println(err)
 		return nil, constants.ErrorReadingFromDB
@@ -53,7 +53,7 @@ func (u *UserRepoImpl) GetUserByMemberId(memberId string) (*model.User, error) {
 		return nil, constants.ErrorReadingFromDB
 	}
 
-	var user model.User
-	row.Scan(&user.MemberId, &user.Name, &user.ShortName, &user.Email, &user.Mobile, &user.Status)
-	return &user, nil
+	var userResult model.User
+	row.Scan(&userResult.MemberId, &userResult.Name, &userResult.ShortName, &userResult.Email, &userResult.Mobile, &userResult.Status)
+	return &userResult, nil
 }

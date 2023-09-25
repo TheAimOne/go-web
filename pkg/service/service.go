@@ -9,6 +9,7 @@ import (
 	venueModel "github.com/go-web/pkg/model/venue"
 	"github.com/go-web/pkg/repository"
 	"github.com/go-web/pkg/repository/member"
+	uuid "github.com/satori/go.uuid"
 )
 
 type EventService interface {
@@ -46,9 +47,9 @@ func NewVenueService(venueRepository repository.VenueRepository) VenueService {
 
 type GroupService interface {
 	CreateGroupWithMembers(group *groupModel.CreateGroupModel) (*groupModel.CreateGroupModel, error)
-	AddMembersToGroup(groupMember []*groupModel.GroupMember) ([]*groupModel.GroupMember, error)
+	AddMembersToGroup(groupId uuid.UUID, groupMember []*groupModel.GroupMember) ([]*groupModel.GroupMember, error)
 	GetGroup(groupId string) (*groupModel.Group, error)
-	GetMembersByGroupId(groupId string) ([]*groupModel.GroupMember, error)
+	GetMembersByGroupId(groupId string) ([]*groupModel.GroupMemberByIdResponse, error)
 	GetGroupsByMemberId(memberId string) ([]*groupModel.Group, error)
 }
 
