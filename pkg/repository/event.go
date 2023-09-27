@@ -12,7 +12,7 @@ import (
 const tableName = "event"
 
 var columns = []string{
-	"event_id", "group_id", "creator_id", "name", "type", "status", "params",
+	"event_id", "group_id", "creator_id", "venue_id", "name", "type", "status", "params",
 }
 
 type EventRepository interface {
@@ -37,6 +37,7 @@ func (e *eventRepoImpl) CreateEvent(event *model.Event) error {
 		event.EventId,
 		event.GroupId,
 		event.CreatorId,
+		event.VenueId,
 		event.Name,
 		event.Type,
 		event.Status,
@@ -62,7 +63,7 @@ func (e *eventRepoImpl) GetEventsByGroupId(groupId string) ([]*model.Event, erro
 
 	for rows.Next() {
 		var e model.Event
-		rows.Scan(&e.EventId, &e.GroupId, &e.CreatorId, &e.Name, &e.Type, &e.Status, &e.Params)
+		rows.Scan(&e.EventId, &e.GroupId, &e.CreatorId, &e.VenueId, &e.Name, &e.Type, &e.Status, &e.Params)
 
 		err = json.Unmarshal(e.Params.([]byte), &e.Params)
 

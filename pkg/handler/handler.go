@@ -11,6 +11,8 @@ import (
 var EventServiceImpl service.EventService
 var EventMemberServiceImpl service.EventMemberService
 var VenueServiceImpl service.VenueService
+var UserServiceImpl service.UserService
+var GroupServiceImpl service.GroupService
 
 func InititializeService() {
 	dbFunction := function.NewDBFunction()
@@ -18,10 +20,14 @@ func InititializeService() {
 	eventRepository := repository.NewEventRepository(dbFunction)
 	eventMemberRepository := member.NewEventMemberRepository(dbFunction)
 	venueRepository := repository.NewVenueRepository(dbFunction)
+	userRepository := repository.NewMemberRepository(dbFunction)
+	groupRepository := repository.NewGroupRepository(dbFunction)
 
 	EventServiceImpl = service.NewEventService(eventRepository)
 	EventMemberServiceImpl = service.NewEventMemberService(eventMemberRepository)
 	VenueServiceImpl = service.NewVenueService(venueRepository)
+	UserServiceImpl = service.NewUserService(userRepository)
+	GroupServiceImpl = service.NewGroupService(groupRepository)
 }
 
 func checkRequest(requestEvent eventModel.Event) {

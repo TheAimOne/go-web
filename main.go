@@ -12,6 +12,8 @@ import (
 
 func main() {
 	s := server.NewServer()
+
+	// Events
 	s.AddHandler(endpoint.Endpoint{
 		Path:    "/events",
 		Method:  "POST",
@@ -32,6 +34,8 @@ func main() {
 		Method:  "GET",
 		Handler: handler.GetEventMembers,
 	})
+
+	// Venues
 	s.AddHandler(endpoint.Endpoint{
 		Path:    "/venues",
 		Method:  "POST",
@@ -41,6 +45,40 @@ func main() {
 		Path:    "/venue",
 		Method:  "POST",
 		Handler: handler.CreateVenueHandler,
+	})
+
+	// User
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/user",
+		Method:  "POST",
+		Handler: handler.CreateUserHandler,
+	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/user",
+		Method:  "GET",
+		Handler: handler.GetUserByIdHandler,
+	})
+
+	// Group
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/group",
+		Method:  "POST",
+		Handler: handler.CreateGroupWithMembershandler,
+	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/group/members",
+		Method:  "POST",
+		Handler: handler.AddMembersToGroupHandler,
+	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/group/members",
+		Method:  "GET",
+		Handler: handler.GetMembersByGroupId,
+	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/member/group",
+		Method:  "GET",
+		Handler: handler.GetGroupsByMemberId,
 	})
 
 	connection.InitDB()
