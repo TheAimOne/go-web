@@ -12,7 +12,7 @@ import (
 const tableName = "event"
 
 var columns = []string{
-	"event_id", "group_id", "creator_id", "venue_id", "name", "type", "status", "params",
+	"event_id", "group_id", "created_by", "venue_id", "name", "type", "status", "params",
 }
 
 type EventRepository interface {

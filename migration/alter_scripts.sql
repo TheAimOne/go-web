@@ -41,8 +41,8 @@ CREATE table if not EXISTS group_member (
 );
 
 ALTER TABLE group_member ADD CONSTRAINT uniq_member_group UNIQUE(group_id, member_id);
-ALTER TABLE group_member ADD CONSTRAINT fk_group_member_group FOREIGN KEY(group_id) REFERENCES "group"(group_id);
-ALTER TABLE group_member ADD CONSTRAINT fk_group_pl_user FOREIGN KEY(member_id) REFERENCES "user"(member_id);
+--ALTER TABLE group_member ADD CONSTRAINT fk_group_member_group FOREIGN KEY(group_id) REFERENCES "group"(group_id);
+--ALTER TABLE group_member ADD CONSTRAINT fk_group_pl_user FOREIGN KEY(member_id) REFERENCES "user"(member_id);
 CREATE INDEX IF NOT EXISTS group_member_ids ON group_member (group_id, member_id);
 
 -- EVENT
@@ -79,5 +79,5 @@ CREATE TABLE if not exists event_member (
 
 ALTER TABLE event_member ADD CONSTRAINT uniq_member_event UNIQUE(event_id, member_id);
 CREATE INDEX IF NOT EXISTS event_member_index ON event_member (event_id, member_id);
-alter table event_member add CONSTRAINT fk_event_id foreign key(event_id) references "event"(event_id);
-alter table event_member add constraint fk_event_member_id foreign key(member_id) references "user"(member_id);
+--alter table event_member add CONSTRAINT fk_event_id foreign key(event_id) references "event"(event_id);
+--alter table event_member add constraint fk_event_member_id foreign key(member_id) references "user"(member_id);
