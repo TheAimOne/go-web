@@ -10,7 +10,7 @@ CREATE TABLE user (
     delete_time TIMESTAMP
 );
 
-CREATE INDEX member_name ON member (name);
+CREATE INDEX user_name ON user (name);
 
 CREATE TABLE group_info (
     id  SERIAL,
