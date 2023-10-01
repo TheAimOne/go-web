@@ -58,6 +58,11 @@ func main() {
 		Method:  "GET",
 		Handler: handler.GetUserByIdHandler,
 	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/users",
+		Method:  "GET",
+		Handler: handler.GetUsersHandler,
+	})
 
 	// Group
 	s.AddHandler(endpoint.Endpoint{

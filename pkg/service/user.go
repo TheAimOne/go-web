@@ -48,3 +48,27 @@ func (u *UserImpl) GetUserByMemberId(memberId string) (*model.User, error) {
 
 	return user, nil
 }
+
+func (u *UserImpl) GetUsers(request model.GetUsersRequest) (*model.GetUsersResponse, error) {
+	page := request.Page
+	perPage := request.PerPage
+
+	if request.Page == 0 {
+		page = 1
+	}
+
+	if request.PerPage == 0 {
+		perPage = 10
+	}
+	users, err := u.userRepository.GetUsers(page, perPage)
+
+	if err != nil {
+		return nil, constants.ErrorGettingUser
+	}
+
+	response := model.GetUsersResponse{
+		Users: users,
+	}
+
+	return &response, nil
+}

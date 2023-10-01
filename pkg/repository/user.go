@@ -16,6 +16,7 @@ var userTableColumns = []string{"member_id", "name", "short_name", "email", "mob
 type UserRepository interface {
 	CreateUser(user model.User) error
 	GetUserByMemberId(memberId string) (*model.User, error)
+	GetUsers(page, perPage int) ([]*model.User, error)
 }
 
 func NewMemberRepository(DB function.DBFunction) UserRepository {
@@ -56,4 +57,26 @@ func (u *UserRepoImpl) GetUserByMemberId(memberId string) (*model.User, error) {
 	var userResult model.User
 	row.Scan(&userResult.MemberId, &userResult.Name, &userResult.ShortName, &userResult.Email, &userResult.Mobile, &userResult.Status)
 	return &userResult, nil
+}
+
+func (u *UserRepoImpl) GetUsers(page, perPage int) ([]*model.User, error) {
+	result := make([]*model.User, 0)
+	limit := perPage
+	offset := (page - 1) * perPage
+
+	condition := fmt.Sprintf("offset %d limit %d", offset, limit)
+
+	rows, err := u.DB.SelectAll(userTableName, condition, userTableColumns)
+	if err != nil || rows == nil {
+		return nil, constants.ErrorReadingFromDB
+	}
+
+	for rows.Next() {
+		var userResult model.User
+		rows.Scan(&userResult.MemberId, &userResult.Name, &userResult.ShortName, &userResult.Email, &userResult.Mobile, &userResult.Status)
+
+		result = append(result, &userResult)
+	}
+
+	return result, nil
 }

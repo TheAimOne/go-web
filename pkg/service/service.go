@@ -50,7 +50,7 @@ type GroupService interface {
 	AddMembersToGroup(groupId uuid.UUID, groupMember []*groupModel.GroupMember) ([]*groupModel.GroupMember, error)
 	GetGroup(groupId string) (*groupModel.Group, error)
 	GetMembersByGroupId(groupId string) ([]*groupModel.GroupMemberByIdResponse, error)
-	GetGroupsByMemberId(memberId string) ([]*groupModel.Group, error)
+	GetGroupsByMemberId(memberId string) (*groupModel.GroupsByMemberResponse, error)
 }
 
 func NewGroupService(groupRepository repository.GroupRepository) GroupService {
@@ -62,6 +62,7 @@ func NewGroupService(groupRepository repository.GroupRepository) GroupService {
 type UserService interface {
 	CreateUser(user *userModel.UserBase) (*userModel.User, error)
 	GetUserByMemberId(memberId string) (*userModel.User, error)
+	GetUsers(userModel.GetUsersRequest) (*userModel.GetUsersResponse, error)
 }
 
 func NewUserService(userRepository repository.UserRepository) UserService {

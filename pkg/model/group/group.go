@@ -41,6 +41,10 @@ type GroupMemberByIdResponse struct {
 	Status    string    `json:"status"`
 }
 
+type GroupsByMemberResponse struct {
+	Data []*Group `json:"data"`
+}
+
 const (
 	ACTIVE = "ACTIVE"
 )

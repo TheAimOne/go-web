@@ -6,7 +6,7 @@ import (
 )
 
 type UserBase struct {
-	MemberId  uuid.UUID `json:"UserId"`
+	MemberId  uuid.UUID `json:"userId"`
 	Name      string    `json:"name"`
 	ShortName string    `json:"shortName"`
 	Email     string    `json:"email"`
@@ -18,6 +18,15 @@ type User struct {
 	model.Audit
 	Id     uint64     `json:"id"`
 	Status UserStatus `json:"status"`
+}
+
+type GetUsersRequest struct {
+	Page    int `json:"page"`
+	PerPage int `json:"perPage"`
+}
+
+type GetUsersResponse struct {
+	Users []*User `json:"data"`
 }
 
 type UserStatus string

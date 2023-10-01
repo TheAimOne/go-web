@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/go-web/pkg/model"
 	userModel "github.com/go-web/pkg/model/user"
@@ -10,7 +11,7 @@ import (
 )
 
 func CreateUserHandler(request interface{}) (*model.Response, error) {
-	requestUser, err := util.ReadJson[userModel.UserBase](request, userModel.UserBase{})
+	requestUser, err := util.ReadJson(request, userModel.UserBase{})
 	if err != nil {
 		return nil, err
 	}
@@ -33,6 +34,37 @@ func GetUserByIdHandler(request interface{}) (*model.Response, error) {
 	}
 
 	user, err := UserServiceImpl.GetUserByMemberId(memberId)
+	if err != nil {
+		return nil, model.NewError(500, err.Error())
+	}
+
+	return util.GetResponse(user), nil
+}
+
+func GetUsersHandler(request interface{}) (*model.Response, error) {
+	r := request.(*http.Request)
+	page := r.URL.Query().Get("page")
+	perPage := r.URL.Query().Get("perPage")
+	log.Printf("page: %s, perPage: %s", page, perPage)
+	// TODO validate pagination
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		log.Println("Invalid page")
+		pageInt = 0
+	}
+
+	perPageInt, err := strconv.Atoi(perPage)
+	if err != nil {
+		log.Println("Invalid perPage")
+		perPageInt = 0
+	}
+
+	request1 := userModel.GetUsersRequest{
+		Page:    pageInt,
+		PerPage: perPageInt,
+	}
+
+	user, err := UserServiceImpl.GetUsers(request1)
 	if err != nil {
 		return nil, model.NewError(500, err.Error())
 	}

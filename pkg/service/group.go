@@ -73,12 +73,16 @@ func (g *GroupImpl) GetMembersByGroupId(groupId string) ([]*model.GroupMemberByI
 	return groupMembers, nil
 }
 
-func (g *GroupImpl) GetGroupsByMemberId(memberId string) ([]*model.Group, error) {
+func (g *GroupImpl) GetGroupsByMemberId(memberId string) (*model.GroupsByMemberResponse, error) {
 	groups, err := g.groupRepository.GetGroupsByMemberId(memberId)
 
 	if err != nil {
 		return nil, constants.ErrorFetchingGroup
 	}
 
-	return groups, nil
+	response := &model.GroupsByMemberResponse{
+		Data: groups,
+	}
+
+	return response, nil
 }

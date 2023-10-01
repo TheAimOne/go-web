@@ -10,7 +10,7 @@ import (
 )
 
 func CreateGroupWithMembershandler(request interface{}) (*model.Response, error) {
-	requestGroup, err := util.ReadJson[*groupModel.CreateGroupModel](request, &groupModel.CreateGroupModel{})
+	requestGroup, err := util.ReadJson(request, &groupModel.CreateGroupModel{})
 	if err != nil {
 		return nil, model.NewError(500, err.Error())
 	}
