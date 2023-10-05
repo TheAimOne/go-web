@@ -51,6 +51,7 @@ type GroupService interface {
 	GetGroup(groupId string) (*groupModel.Group, error)
 	GetMembersByGroupId(groupId string) ([]*groupModel.GroupMemberByIdResponse, error)
 	GetGroupsByMemberId(memberId string) (*groupModel.GroupsByMemberResponse, error)
+	GetGroups(request groupModel.GroupsByNameRequest) (*groupModel.GroupsByMemberResponse, error)
 }
 
 func NewGroupService(groupRepository repository.GroupRepository) GroupService {

@@ -25,6 +25,7 @@ type GroupRepository interface {
 	GetGroupById(groupId string) (*model.Group, error)
 	GetMembersByGroupId(groupId string) ([]*model.GroupMemberByIdResponse, error)
 	GetGroupsByMemberId(memberId string) ([]*model.Group, error)
+	GetGroups(name string, page, perPage int) ([]*model.Group, error)
 }
 
 func NewGroupRepository(DB function.DBFunction) GroupRepository {
@@ -112,6 +113,36 @@ func (g *groupRepoImpl) GetGroupsByMemberId(memberId string) ([]*model.Group, er
 	on gm.group_id = g.group_id where gm.member_id = '%s' `
 
 	rows, err := g.DB.SelectRaw(fmt.Sprintf(query, memberId))
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	result := make([]*model.Group, 0)
+
+	for rows.Next() {
+		var group model.Group
+		rows.Scan(&group.GroupId, &group.Name, &group.Description, &group.Size)
+		result = append(result, &group)
+	}
+
+	return result, nil
+}
+
+func (g *groupRepoImpl) GetGroups(name string, page, perPage int) ([]*model.Group, error) {
+	limit := perPage
+	offset := page - 1
+
+	query := `select group_id, g.name, g.description, g.size
+	from "group" g`
+
+	if name != "" {
+		query = fmt.Sprintf("%s where name=%s", query, name)
+	}
+
+	query = fmt.Sprintf("%s limit %d offset %d", query, limit, offset)
+
+	rows, err := g.DB.SelectRaw(query)
 	if err != nil {
 		log.Println(err)
 		return nil, err

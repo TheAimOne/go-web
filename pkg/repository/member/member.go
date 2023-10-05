@@ -48,12 +48,15 @@ func (e *eventMemberRepoImpl) GetEventMembers(addEventMember *modelMember.GetEve
 
 	query := `
 	select 
-		event_id,
-		group_id,
-		member_id,
-		action,
-		status
-	from event_member
+		e.event_id,
+		e.group_id,
+		e.member_id,
+		e.action,
+		e.status,
+		u.name
+	from event_member e
+	join "user" u
+		on u.member_id = e.member_id
 	where
 		event_id='%s'
 	`
@@ -66,7 +69,7 @@ func (e *eventMemberRepoImpl) GetEventMembers(addEventMember *modelMember.GetEve
 
 	for rows.Next() {
 		var e modelMember.EventMember
-		rows.Scan(&e.EventId, &e.GroupId, &e.MemberId, &e.Action, &e.Status)
+		rows.Scan(&e.EventId, &e.GroupId, &e.MemberId, &e.Action, &e.Status, &e.MemberName)
 
 		result = append(result, &e)
 	}

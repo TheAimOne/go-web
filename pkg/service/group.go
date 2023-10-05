@@ -86,3 +86,27 @@ func (g *GroupImpl) GetGroupsByMemberId(memberId string) (*model.GroupsByMemberR
 
 	return response, nil
 }
+
+func (g *GroupImpl) GetGroups(request model.GroupsByNameRequest) (*model.GroupsByMemberResponse, error) {
+	page := request.Page
+	perPage := request.PerPage
+
+	if request.Page == 0 {
+		page = 1
+	}
+
+	if request.PerPage == 0 {
+		perPage = 10
+	}
+	groups, err := g.groupRepository.GetGroups(request.Name, page, perPage)
+
+	if err != nil {
+		return nil, constants.ErrorFetchingGroup
+	}
+
+	response := &model.GroupsByMemberResponse{
+		Data: groups,
+	}
+
+	return response, nil
+}

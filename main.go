@@ -85,6 +85,11 @@ func main() {
 		Method:  "GET",
 		Handler: handler.GetGroupsByMemberId,
 	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/groups",
+		Method:  "GET",
+		Handler: handler.GetGroups,
+	})
 
 	connection.InitDB()
 

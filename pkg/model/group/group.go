@@ -41,6 +41,12 @@ type GroupMemberByIdResponse struct {
 	Status    string    `json:"status"`
 }
 
+type GroupsByNameRequest struct {
+	Name    string `json:"name"`
+	Page    int    `json:"page"`
+	PerPage int    `json:"perPage"`
+}
+
 type GroupsByMemberResponse struct {
 	Data []*Group `json:"data"`
 }

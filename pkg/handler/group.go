@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/go-web/pkg/model"
 	groupModel "github.com/go-web/pkg/model/group"
@@ -63,6 +64,41 @@ func GetGroupsByMemberId(request interface{}) (*model.Response, error) {
 	}
 
 	groups, err := GroupServiceImpl.GetGroupsByMemberId(memberId)
+	if err != nil {
+		return nil, model.NewError(500, err.Error())
+	}
+
+	return util.GetResponse(groups), nil
+}
+
+func GetGroups(request interface{}) (*model.Response, error) {
+	r := request.(*http.Request)
+	name := r.URL.Query().Get("name")
+	log.Println("name:", name)
+
+	page := r.URL.Query().Get("page")
+	perPage := r.URL.Query().Get("perPage")
+	log.Printf("page: %s, perPage: %s", page, perPage)
+	// TODO validate pagination
+	pageInt, err := strconv.Atoi(page)
+	if err != nil {
+		log.Println("Invalid page")
+		pageInt = 0
+	}
+
+	perPageInt, err := strconv.Atoi(perPage)
+	if err != nil {
+		log.Println("Invalid perPage")
+		perPageInt = 0
+	}
+
+	request1 := groupModel.GroupsByNameRequest{
+		Name:    name,
+		Page:    pageInt,
+		PerPage: perPageInt,
+	}
+
+	groups, err := GroupServiceImpl.GetGroups(request1)
 	if err != nil {
 		return nil, model.NewError(500, err.Error())
 	}
