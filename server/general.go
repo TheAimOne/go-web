@@ -99,6 +99,9 @@ func (s *Server) WriteError(err error, rw http.ResponseWriter) {
 		status = e.Status
 	}
 
+	rw.Header().Set("Access-Control-Allow-Origin", "*")
+	rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+	rw.Header().Set("Access-Control-Allow-Methods", "*")
 	rw.Header().Set(constants.HEADER_CONTENT_TYPE_KEY, constants.HEADER_APPLICATION_JSON)
 	rw.WriteHeader(status)
 	rw.Write([]byte(b))

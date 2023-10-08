@@ -35,8 +35,6 @@ func CreateEventMemberHandler(request interface{}) (*model.Response, error) {
 	resp, err := EventMemberServiceImpl.CreateEventMember(&requestEvent)
 
 	if err != nil {
-		// TODO
-		fmt.Println("End Error", err)
 		return nil, model.NewError(400, err.Error())
 	}
 

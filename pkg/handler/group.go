@@ -25,14 +25,14 @@ func CreateGroupWithMembershandler(request interface{}) (*model.Response, error)
 }
 
 func AddMembersToGroupHandler(request interface{}) (*model.Response, error) {
-	request, err := util.ReadJson[groupModel.AddMembersToGroupRequest](request, groupModel.AddMembersToGroupRequest{})
+	request, err := util.ReadJson(request, groupModel.AddMembersToGroupRequest{})
 	addMembersToGroupRequest := request.(*groupModel.AddMembersToGroupRequest)
 	if err != nil {
-		return nil, model.NewError(500, err.Error())
+		return nil, model.NewError(400, err.Error())
 	}
 	newMembers, err := GroupServiceImpl.AddMembersToGroup(addMembersToGroupRequest.GroupId, addMembersToGroupRequest.Members)
 	if err != nil {
-		return nil, model.NewError(500, err.Error())
+		return nil, model.NewError(400, err.Error())
 	}
 	return util.GetResponse(newMembers), nil
 }

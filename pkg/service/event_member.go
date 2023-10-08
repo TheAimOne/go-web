@@ -19,6 +19,10 @@ func (e *eventMemberImpl) CreateEventMember(request *eventModel.AddMemberToEvent
 
 	err := e.EventMemberRepository.AddEventMember(request)
 
+	if err != nil {
+		return nil, constants.ErrorJoiningEvent
+	}
+
 	response := &eventModel.AddMemberToEventResponse{}
 
 	response.Status = "CONFIRMED"
