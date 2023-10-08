@@ -81,3 +81,5 @@ ALTER TABLE event_member ADD CONSTRAINT uniq_member_event UNIQUE(event_id, membe
 CREATE INDEX IF NOT EXISTS event_member_index ON event_member (event_id, member_id);
 --alter table event_member add CONSTRAINT fk_event_id foreign key(event_id) references "event"(event_id);
 --alter table event_member add constraint fk_event_member_id foreign key(member_id) references "user"(member_id);
+
+ALTER TABLE "user" ADD COLUMN "password" VARCHAR(20) NOT NULL DEFAULT 'password1';
