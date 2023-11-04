@@ -17,6 +17,8 @@ type UserRepository interface {
 	CreateUser(user model.User) error
 	GetUserByMemberId(memberId string) (*model.User, error)
 	GetUsers(page, perPage int) ([]*model.User, error)
+	AuthenticateUserByEmail(email, password string) (*model.User, error)
+	AuthenticateUserByMobile(mobile, password string) (*model.User, error)
 }
 
 func NewMemberRepository(DB function.DBFunction) UserRepository {
@@ -79,4 +81,34 @@ func (u *UserRepoImpl) GetUsers(page, perPage int) ([]*model.User, error) {
 	}
 
 	return result, nil
+}
+
+func (u *UserRepoImpl) AuthenticateUserByMobile(mobile, password string) (*model.User, error) {
+	row, err := u.DB.Select(userTableName, fmt.Sprintf(" where mobile = '%s' and password = '%s'", mobile, password), userTableColumns)
+	if err != nil {
+		log.Println(err)
+		return nil, constants.ErrorReadingFromDB
+	}
+	if row == nil {
+		return nil, constants.ErrorReadingFromDB
+	}
+
+	var userResult model.User
+	row.Scan(&userResult.MemberId, &userResult.Name, &userResult.ShortName, &userResult.Email, &userResult.Mobile, &userResult.Status)
+	return &userResult, nil
+}
+
+func (u *UserRepoImpl) AuthenticateUserByEmail(email, password string) (*model.User, error) {
+	row, err := u.DB.Select(userTableName, fmt.Sprintf(" where email = '%s' and password = '%s'", email, password), userTableColumns)
+	if err != nil {
+		log.Println(err)
+		return nil, constants.ErrorReadingFromDB
+	}
+	if row == nil {
+		return nil, constants.ErrorReadingFromDB
+	}
+
+	var userResult model.User
+	row.Scan(&userResult.MemberId, &userResult.Name, &userResult.ShortName, &userResult.Email, &userResult.Mobile, &userResult.Status)
+	return &userResult, nil
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/go-web/pkg/service"
 )
 
+var AuthServiceImpl service.AuthService
 var EventServiceImpl service.EventService
 var EventMemberServiceImpl service.EventMemberService
 var VenueServiceImpl service.VenueService
@@ -23,6 +24,7 @@ func InititializeService() {
 	userRepository := repository.NewMemberRepository(dbFunction)
 	groupRepository := repository.NewGroupRepository(dbFunction)
 
+	AuthServiceImpl = service.NewAuthService(userRepository)
 	EventServiceImpl = service.NewEventService(eventRepository)
 	EventMemberServiceImpl = service.NewEventMemberService(eventMemberRepository)
 	VenueServiceImpl = service.NewVenueService(venueRepository)

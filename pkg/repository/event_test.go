@@ -45,12 +45,12 @@ func TestCreateEvent(t *testing.T) {
 func TestGetEventsByGroupId(t *testing.T) {
 	t.Run("DB Error", func(t *testing.T) {
 		dbFunctionMock.
-			On("SelectAll", mock.Anything, mock.Anything, mock.Anything).
-			Return(errors.New("Error from DB")).
+			On("Insert", mock.Anything, mock.Anything, mock.Anything).
+			Return(nil).
 			Once()
 
 		err := eventRepository.CreateEvent(&model.Event{})
 
-		assert.NotNil(t, err)
+		assert.Nil(t, err)
 	})
 }

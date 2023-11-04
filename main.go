@@ -90,6 +90,11 @@ func main() {
 		Method:  "GET",
 		Handler: handler.GetGroups,
 	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/user/authenticate",
+		Method:  "POST",
+		Handler: handler.CreateAuthenticationHandler,
+	})
 
 	connection.InitDB()
 

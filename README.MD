@@ -34,4 +34,5 @@ mockery --all --keeptree
 
 ```
 go test -v ./...
+go test -v -run ^TestCreateAuthToken$ github.com/go-web/middleware
 ```

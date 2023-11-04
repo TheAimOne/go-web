@@ -2,6 +2,7 @@ package service
 
 import (
 	model "github.com/go-web/pkg/model"
+	authModel "github.com/go-web/pkg/model/auth"
 	eventModel "github.com/go-web/pkg/model/event"
 	groupModel "github.com/go-web/pkg/model/group"
 	memberModel "github.com/go-web/pkg/model/member"
@@ -11,6 +12,16 @@ import (
 	"github.com/go-web/pkg/repository/member"
 	uuid "github.com/satori/go.uuid"
 )
+
+type AuthService interface {
+	Authenticate(authRequest *authModel.AuthRequest) (*authModel.AuthResponse, error)
+}
+
+func NewAuthService(userRepository repository.UserRepository) AuthService {
+	return &authImpl{
+		userRepository: userRepository,
+	}
+}
 
 type EventService interface {
 	CreateEvent(eventRequest *eventModel.Event) (*eventModel.EventResponse, error)

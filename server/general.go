@@ -56,6 +56,7 @@ func (s *Server) Handle() http.Handler {
 			rw.Header().Set("Access-Control-Allow-Origin", "*")
 			rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 			rw.Header().Set("Access-Control-Allow-Methods", "*")
+			rw.Header().Set("Content-Type", "application/json")
 			rw.WriteHeader(http.StatusOK)
 			rw.Write([]byte(b))
 			return
@@ -79,6 +80,7 @@ func (s *Server) Handle() http.Handler {
 				Message: "Invalid route",
 				Status:  404,
 			})
+			rw.Header().Set("Content-Type", "application/json")
 			rw.WriteHeader(http.StatusNotFound)
 			rw.Write([]byte(b))
 		}
