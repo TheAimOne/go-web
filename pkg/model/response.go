@@ -22,7 +22,7 @@ func (r *Response) Json() *Response {
 func (r *Response) Write(rw http.ResponseWriter) {
 	rw.Header().Set(constants.HEADER_CONTENT_TYPE_KEY, constants.HEADER_APPLICATION_JSON)
 	rw.Header().Set("Access-Control-Allow-Origin", "*")
-	rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+	rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth")
 	rw.Header().Set("Access-Control-Allow-Methods", "*")
 
 	b, _ := json.Marshal(r.Body)

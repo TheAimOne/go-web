@@ -27,42 +27,44 @@ const (
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		log.Println("Path : ", r.URL.Path)
+		if r.URL.Path == "/user/authenticate" || r.Method == "OPTIONS" {
+			next.ServeHTTP(rw, r)
+			return
+		}
 
-		if r.URL.Path != "/user/authenticate" {
-			log.Println("Authentication testing", r.Header.Get("x-auth"))
+		log.Println("Authentication testing", r.Header.Get("x-auth"))
 
-			auth, err := ExtractAuthToken(r.Header.Get("x-auth"))
+		auth, err := ExtractAuthToken(r.Header.Get("x-auth"))
 
-			if err != nil {
-				fmt.Println("dinga error", err)
-				b, _ := json.Marshal(model.Error{
-					Message: "Not Authenticated",
-					Status:  400,
-				})
-				rw.Header().Set("Access-Control-Allow-Origin", "*")
-				rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-				rw.Header().Set("Access-Control-Allow-Methods", "*")
-				rw.Header().Set("Content-Type", "application/json")
-				rw.WriteHeader(http.StatusForbidden)
-				rw.Write([]byte(b))
-				return
-			}
+		if err != nil {
+			fmt.Println("dinga error", err)
+			b, _ := json.Marshal(model.Error{
+				Message: "Not Authenticated",
+				Status:  400,
+			})
+			rw.Header().Set("Access-Control-Allow-Origin", "*")
+			rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth")
+			rw.Header().Set("Access-Control-Allow-Methods", "*")
+			rw.Header().Set("Content-Type", "application/json")
+			rw.WriteHeader(http.StatusForbidden)
+			rw.Write([]byte(b))
+			return
+		}
 
-			isValid := CheckTokenValidity(auth)
-			if !isValid {
-				fmt.Println("Not Valid token", err)
-				b, _ := json.Marshal(model.Error{
-					Message: "Invalid Token",
-					Status:  400,
-				})
-				rw.Header().Set("Access-Control-Allow-Origin", "*")
-				rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-				rw.Header().Set("Access-Control-Allow-Methods", "*")
-				rw.Header().Set("Content-Type", "application/json")
-				rw.WriteHeader(http.StatusForbidden)
-				rw.Write([]byte(b))
-				return
-			}
+		isValid := CheckTokenValidity(auth)
+		if !isValid {
+			fmt.Println("Not Valid token", err)
+			b, _ := json.Marshal(model.Error{
+				Message: "Invalid Token",
+				Status:  400,
+			})
+			rw.Header().Set("Access-Control-Allow-Origin", "*")
+			rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth")
+			rw.Header().Set("Access-Control-Allow-Methods", "*")
+			rw.Header().Set("Content-Type", "application/json")
+			rw.WriteHeader(http.StatusForbidden)
+			rw.Write([]byte(b))
+			return
 		}
 
 		next.ServeHTTP(rw, r)

@@ -54,7 +54,7 @@ func (s *Server) Handle() http.Handler {
 				Status:  200,
 			})
 			rw.Header().Set("Access-Control-Allow-Origin", "*")
-			rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+			rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth")
 			rw.Header().Set("Access-Control-Allow-Methods", "*")
 			rw.Header().Set("Content-Type", "application/json")
 			rw.WriteHeader(http.StatusOK)
@@ -102,7 +102,7 @@ func (s *Server) WriteError(err error, rw http.ResponseWriter) {
 	}
 
 	rw.Header().Set("Access-Control-Allow-Origin", "*")
-	rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+	rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth")
 	rw.Header().Set("Access-Control-Allow-Methods", "*")
 	rw.Header().Set(constants.HEADER_CONTENT_TYPE_KEY, constants.HEADER_APPLICATION_JSON)
 	rw.WriteHeader(status)
