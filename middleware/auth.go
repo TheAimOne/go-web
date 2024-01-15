@@ -27,6 +27,12 @@ const (
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		log.Println("Path : ", r.URL.Path)
+
+		rw.Header().Set("Access-Control-Allow-Origin", "*")
+		rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth")
+		rw.Header().Set("Access-Control-Allow-Methods", "*")
+		rw.Header().Set("Content-Type", "application/json")
+
 		if r.URL.Path == "/user/authenticate" || r.Method == "OPTIONS" {
 			next.ServeHTTP(rw, r)
 			return
