@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"log"
 
 	"github.com/go-web/pkg/constants"
 	model "github.com/go-web/pkg/model/group"
@@ -22,6 +23,7 @@ func (g *GroupImpl) CreateGroupWithMembers(group *model.CreateGroupModel) (*mode
 	}
 	err := g.groupRepository.CreateGroup(&group.GroupInfo)
 	if err != nil {
+		log.Println(err)
 		return nil, constants.ErrorCreatingGroup
 	}
 

@@ -2,6 +2,7 @@ package service
 
 import (
 	"log"
+	"strings"
 
 	"github.com/go-web/pkg/constants"
 	eventModel "github.com/go-web/pkg/model/event"
@@ -43,4 +44,19 @@ func (e *eventMemberImpl) GetEventMembers(request *memberModel.GetEventMembersRe
 	response.Members = result
 
 	return response, err
+}
+
+func (e *eventMemberImpl) CountMembersByEventId(eventIds []string) ([]*memberModel.CountMembersByEventId, error) {
+	for i, eventId := range eventIds {
+		eventIds[i] = "'" + eventId + "'"
+	}
+	idStr := strings.Join(eventIds, ",")
+
+	result, err := e.EventMemberRepository.CountEventMemberByEventIds(idStr)
+	if err != nil {
+		log.Printf("Error getting CountMembersByEventId %v", err)
+		return nil, constants.ErrorGettingCountByEventId
+	}
+
+	return result, nil
 }

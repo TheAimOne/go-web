@@ -28,15 +28,16 @@ type EventService interface {
 	GetEventsByGroupId(eventRequest *eventModel.GetEventRequest) (*eventModel.GetEventResponse, error)
 }
 
-func NewEventService(eventRepository repository.EventRepository) EventService {
+func NewEventService(eventRepository repository.EventRepository, eventMemberService EventMemberService) EventService {
 	return &eventImpl{
-		eventRepository,
+		eventRepository, eventMemberService,
 	}
 }
 
 type EventMemberService interface {
 	CreateEventMember(eventRequest *eventModel.AddMemberToEventRequest) (*eventModel.AddMemberToEventResponse, error)
 	GetEventMembers(request *memberModel.GetEventMembersRequest) (*memberModel.GetEventMembersResponse, error)
+	CountMembersByEventId(ids []string) ([]*memberModel.CountMembersByEventId, error)
 }
 
 func NewEventMemberService(eventRepository member.EventMemberRepository) EventMemberService {
@@ -75,6 +76,7 @@ type UserService interface {
 	CreateUser(user *userModel.UserBase) (*userModel.User, error)
 	GetUserByMemberId(memberId string) (*userModel.User, error)
 	GetUsers(userModel.GetUsersRequest) (*userModel.GetUsersResponse, error)
+	SearchUsers(filter model.Filter) (*model.PaginationResponse[*userModel.User], error)
 }
 
 func NewUserService(userRepository repository.UserRepository) UserService {

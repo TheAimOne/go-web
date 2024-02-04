@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/go-web/pkg/constants"
+	filter_model "github.com/go-web/pkg/model"
 	model "github.com/go-web/pkg/model/user"
 	"github.com/go-web/pkg/repository"
 	uuid "github.com/satori/go.uuid"
@@ -68,6 +69,25 @@ func (u *UserImpl) GetUsers(request model.GetUsersRequest) (*model.GetUsersRespo
 
 	response := model.GetUsersResponse{
 		Users: users,
+	}
+
+	return &response, nil
+}
+
+func (u *UserImpl) SearchUsers(filter filter_model.Filter) (*filter_model.PaginationResponse[*model.User], error) {
+
+	if filter.PageNumber < 0 || filter.PageSize < 0 {
+		return nil, constants.ErrorPagination
+	}
+
+	users, err := u.userRepository.SearchUsers(filter)
+	if err != nil {
+		return nil, constants.ErrorSearchingUser
+	}
+
+	response := filter_model.PaginationResponse[*model.User]{
+		TotalCount: 0,
+		Data:       users,
 	}
 
 	return &response, nil

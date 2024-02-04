@@ -24,9 +24,10 @@ var (
 	ErrorParsingParams = errors.New("Invalid Params")
 	ErrorCreatingEvent = errors.New("Error creating event")
 
-	ErrorGettingEventMembers = errors.New("Error getting event members")
-	ErrorCreatingVenue       = errors.New("Error creating Venue")
-	ErrorGettingVenues       = errors.New("Error Getting Venues")
+	ErrorGettingEventMembers   = errors.New("Error getting event members")
+	ErrorCreatingVenue         = errors.New("Error creating Venue")
+	ErrorGettingVenues         = errors.New("Error Getting Venues")
+	ErrorGettingCountByEventId = errors.New("Error getting count by Event ID")
 
 	ErrorCreatingGroup        = errors.New("Error Creating Group")
 	ErrorFetchingGroup        = errors.New("Error Fetching Group")
@@ -37,4 +38,8 @@ var (
 	ErrorCreatingUser = errors.New("Error Creating User")
 
 	ErrorJoiningEvent = errors.New("Error joining or already joined")
+
+	ErrorFilterIsNull  = errors.New("Filter object is empty")
+	ErrorPagination    = errors.New("Page number or page size is invalid")
+	ErrorSearchingUser = errors.New("Error Searching User")
 )

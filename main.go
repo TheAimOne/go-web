@@ -20,7 +20,7 @@ func main() {
 		Handler: handler.CreateEventHandler,
 	})
 	s.AddHandler(endpoint.Endpoint{
-		Path:    "/groups/events",
+		Path:    "/group/events",
 		Method:  "GET",
 		Handler: handler.GetEventByGroupIdHandler,
 	})
@@ -63,12 +63,22 @@ func main() {
 		Method:  "GET",
 		Handler: handler.GetUsersHandler,
 	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/users/search",
+		Method:  "POST",
+		Handler: handler.SearchUserHandler,
+	})
 
 	// Group
 	s.AddHandler(endpoint.Endpoint{
 		Path:    "/group",
 		Method:  "POST",
 		Handler: handler.CreateGroupWithMembershandler,
+	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/group",
+		Method:  "GET",
+		Handler: handler.GetGroupById,
 	})
 	s.AddHandler(endpoint.Endpoint{
 		Path:    "/group/members",
@@ -90,6 +100,8 @@ func main() {
 		Method:  "GET",
 		Handler: handler.GetGroups,
 	})
+
+	// Authentication
 	s.AddHandler(endpoint.Endpoint{
 		Path:    "/user/authenticate",
 		Method:  "POST",

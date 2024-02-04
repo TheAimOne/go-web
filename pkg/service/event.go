@@ -11,6 +11,7 @@ import (
 
 type eventImpl struct {
 	EventRepository repository.EventRepository
+	EventMemService EventMemberService
 }
 
 func (e *eventImpl) CreateEvent(requestEvent *eventModel.Event) (*eventModel.EventResponse, error) {
@@ -37,6 +38,24 @@ func (e *eventImpl) CreateEvent(requestEvent *eventModel.Event) (*eventModel.Eve
 	}, nil
 }
 
+func GetCountOfEventParticipants(e *eventImpl, result []*eventModel.Event) (map[string]int64, error) {
+	var ids []string
+	for _, event := range result {
+		ids = append(ids, event.EventId.String())
+	}
+	countResult, err := e.EventMemService.CountMembersByEventId(ids)
+	if err != nil {
+		return nil, err
+	}
+
+	eventIdCountMap := make(map[string]int64)
+	for _, result := range countResult {
+		eventIdCountMap[result.EventId.String()] = result.Count
+	}
+
+	return eventIdCountMap, nil
+}
+
 func (e *eventImpl) GetEventsByGroupId(eventRequest *eventModel.GetEventRequest) (*eventModel.GetEventResponse, error) {
 
 	groupId := eventRequest.GroupId
@@ -50,6 +69,18 @@ func (e *eventImpl) GetEventsByGroupId(eventRequest *eventModel.GetEventRequest)
 	response := &eventModel.GetEventResponse{}
 
 	response.Data = result
+
+	if eventRequest.GetCountOfParticipants && len(result) > 0 {
+		eventIdCountMap, err := GetCountOfEventParticipants(e, result)
+		if err != nil {
+			return nil, err
+		}
+		for _, event := range response.Data {
+			if val, ok := eventIdCountMap[event.EventId.String()]; ok {
+				event.NoOfJoinedParticipants = val
+			}
+		}
+	}
 
 	return response, nil
 }

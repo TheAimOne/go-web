@@ -25,8 +25,8 @@ func InititializeService() {
 	groupRepository := repository.NewGroupRepository(dbFunction)
 
 	AuthServiceImpl = service.NewAuthService(userRepository)
-	EventServiceImpl = service.NewEventService(eventRepository)
 	EventMemberServiceImpl = service.NewEventMemberService(eventMemberRepository)
+	EventServiceImpl = service.NewEventService(eventRepository, EventMemberServiceImpl)
 	VenueServiceImpl = service.NewVenueService(venueRepository)
 	UserServiceImpl = service.NewUserService(userRepository)
 	GroupServiceImpl = service.NewGroupService(groupRepository)

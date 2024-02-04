@@ -27,3 +27,8 @@ type GetEventMembersRequest struct {
 type GetEventMembersResponse struct {
 	Members []*EventMember `json:"data"`
 }
+
+type CountMembersByEventId struct {
+	EventId uuid.UUID
+	Count   int64
+}

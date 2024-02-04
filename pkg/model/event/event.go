@@ -6,19 +6,33 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
+type EventType string
+
+const (
+	Sports EventType = "sports"
+)
+
 type Event struct {
-	Id          int64       `json:"id"`
-	EventId     uuid.UUID   `json:"eventId"`
-	GroupId     uuid.UUID   `json:"groupId"`
-	VenueId     uuid.UUID   `json:"venueId"`
-	CreatorId   uuid.UUID   `json:"creatorId"`
-	Name        string      `json:"name"`
-	Type        string      `json:"type"`
-	Status      string      `json:"status"`
-	Params      interface{} `json:"params"`
-	CreateTime  time.Time
-	UpdateTime  time.Time
-	DeletedTine time.Time
+	Id                     int64       `json:"id"`
+	EventId                uuid.UUID   `json:"eventId"`
+	GroupId                uuid.UUID   `json:"groupId"`
+	VenueId                uuid.UUID   `json:"venueId"`
+	CreatorId              uuid.UUID   `json:"creatorId"`
+	Name                   string      `json:"name"`
+	Description            string      `json:"description"`
+	Type                   EventType   `json:"type"`
+	Status                 string      `json:"status"`
+	Params                 interface{} `json:"params"`
+	NoOfParticipants       int64       `json:"noOfParticipants"`
+	NoOfJoinedParticipants int64       `json:"noOfJoinedParticipants"`
+	StartDateAndTime       time.Time   `json:"startDateAndTime"`
+	EndDateAndTime         time.Time   `json:"endDateAndTime"`
+	CreateTime             time.Time
+	UpdateTime             time.Time
+	DeletedTine            time.Time
+}
+
+type EventDetailResponse struct {
 }
 
 type EventResponse struct {
@@ -27,7 +41,8 @@ type EventResponse struct {
 }
 
 type GetEventRequest struct {
-	GroupId string
+	GroupId                string
+	GetCountOfParticipants bool
 }
 
 type GetEventResponse struct {

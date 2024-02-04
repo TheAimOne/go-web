@@ -83,3 +83,25 @@ CREATE INDEX IF NOT EXISTS event_member_index ON event_member (event_id, member_
 --alter table event_member add constraint fk_event_member_id foreign key(member_id) references "user"(member_id);
 
 ALTER TABLE "user" ADD COLUMN "password" VARCHAR(20) NOT NULL DEFAULT 'password1';
+
+create table if not exists venue (
+	id uuid PRIMARY KEY,
+	name varchar(400),
+	address varchar(1000),
+	latitude decimal,
+	longitude decimal,
+	opening_time varchar(255),
+	closing_time varchar(255),
+	rating int,
+	create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_by uuid,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_by uuid,
+    delete_time TIMESTAMP
+);
+
+alter table event ADD column "no_of_participants" INT NOT NULL;
+alter table event ADD column "description" varchar(1000) NOT NULL;
+
+alter table event ADD column "start_date_time" timestamp with time zone;
+alter table event add column "end_date_time" timestamp with time zone;

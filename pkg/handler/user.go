@@ -71,3 +71,17 @@ func GetUsersHandler(request interface{}) (*model.Response, error) {
 
 	return util.GetResponse(user), nil
 }
+
+func SearchUserHandler(request interface{}) (*model.Response, error) {
+	filterRequest, err := util.ReadJson(request, model.Filter{})
+	if err != nil {
+		return nil, model.NewError(400, err.Error())
+	}
+
+	users, err := UserServiceImpl.SearchUsers(*filterRequest)
+	if err != nil {
+		return nil, model.NewError(500, err.Error())
+	}
+
+	return util.GetResponse(users), nil
+}

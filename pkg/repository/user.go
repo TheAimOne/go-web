@@ -1,11 +1,13 @@
 package repository
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
 	"github.com/go-web/database/function"
 	"github.com/go-web/pkg/constants"
+	filter_model "github.com/go-web/pkg/model"
 	model "github.com/go-web/pkg/model/user"
 )
 
@@ -13,12 +15,22 @@ const userTableName = `"user"`
 
 var userTableColumns = []string{"member_id", "name", "short_name", "email", "mobile", "status"}
 
+var UserFilterMap = map[string]string{
+	"memberId":  "member_id",
+	"name":      "name",
+	"shortName": "short_name",
+	"email":     "email",
+	"mobile":    "mobile",
+	"status":    "status",
+}
+
 type UserRepository interface {
 	CreateUser(user model.User) error
 	GetUserByMemberId(memberId string) (*model.User, error)
 	GetUsers(page, perPage int) ([]*model.User, error)
 	AuthenticateUserByEmail(email, password string) (*model.User, error)
 	AuthenticateUserByMobile(mobile, password string) (*model.User, error)
+	SearchUsers(filter filter_model.Filter) ([]*model.User, error)
 }
 
 func NewMemberRepository(DB function.DBFunction) UserRepository {
@@ -62,7 +74,6 @@ func (u *UserRepoImpl) GetUserByMemberId(memberId string) (*model.User, error) {
 }
 
 func (u *UserRepoImpl) GetUsers(page, perPage int) ([]*model.User, error) {
-	result := make([]*model.User, 0)
 	limit := perPage
 	offset := (page - 1) * perPage
 
@@ -73,14 +84,18 @@ func (u *UserRepoImpl) GetUsers(page, perPage int) ([]*model.User, error) {
 		return nil, constants.ErrorReadingFromDB
 	}
 
+	return getUserListFromRows(rows), nil
+}
+
+func getUserListFromRows(rows *sql.Rows) []*model.User {
+	result := make([]*model.User, 0)
 	for rows.Next() {
 		var userResult model.User
 		rows.Scan(&userResult.MemberId, &userResult.Name, &userResult.ShortName, &userResult.Email, &userResult.Mobile, &userResult.Status)
 
 		result = append(result, &userResult)
 	}
-
-	return result, nil
+	return result
 }
 
 func (u *UserRepoImpl) AuthenticateUserByMobile(mobile, password string) (*model.User, error) {
@@ -111,4 +126,15 @@ func (u *UserRepoImpl) AuthenticateUserByEmail(email, password string) (*model.U
 	var userResult model.User
 	row.Scan(&userResult.MemberId, &userResult.Name, &userResult.ShortName, &userResult.Email, &userResult.Mobile, &userResult.Status)
 	return &userResult, nil
+}
+
+func (u *UserRepoImpl) SearchUsers(filter filter_model.Filter) ([]*model.User, error) {
+	rows, err := u.DB.SelectPaginateAndFilter(userTableName, filter, userTableColumns, UserFilterMap)
+
+	if err != nil {
+		log.Println(err)
+		return nil, constants.ErrorReadingFromDB
+	}
+
+	return getUserListFromRows(rows), nil
 }

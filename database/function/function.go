@@ -49,8 +49,9 @@ func (f *functionImpl) SelectAll(table, condition string, columns []string) (*sq
 	if err != nil {
 		return nil, constants.ErrorCreatingSql
 	}
+	query := fmt.Sprintf("select %s from %s %s", columnString, table, condition)
 
-	rows, err := connection.DB.Query(fmt.Sprintf("select %s from %s %s", columnString, table, condition))
+	rows, err := connection.DB.Query(query)
 
 	return rows, nil
 }
@@ -82,13 +83,20 @@ func (f *functionImpl) SelectRaw(query string) (*sql.Rows, error) {
 	return rows, err
 }
 
-func (f *functionImpl) SelectPaginateAndFilter(table string, filter model.Filter, columns []string, filterMap map[string]string) (*sql.Rows, error) {
+func (f *functionImpl) SelectPaginateAndFilter(table string, filter model.Filter, columns []string,
+	filterMap map[string]string) (*sql.Rows, error) {
 	columnString, _, err := database_util.ColumnHelper(columns)
 	if err != nil {
 		return nil, constants.ErrorCreatingSql
 	}
 
-	pageString := fmt.Sprintf("limit %s offset %s", strconv.FormatInt(filter.PageSize, 10), strconv.FormatInt(filter.StartsWith, 10))
+	pageString := ""
+	if filter.PageSize != 0 {
+		offset := filter.PageNumber * filter.PageSize
+		pageString = fmt.Sprintf("limit %s offset %s", strconv.FormatInt(filter.PageSize, 10),
+			strconv.FormatInt(offset, 10))
+
+	}
 
 	sortString := ""
 
@@ -100,8 +108,9 @@ func (f *functionImpl) SelectPaginateAndFilter(table string, filter model.Filter
 	}
 
 	whereCondition := database_util.AddWhereCondition(filterMap, &filter)
-
-	rows, err := connection.DB.Query(fmt.Sprintf("select %s from %s %s %s %s", columnString, table, whereCondition, sortString, pageString))
+	finalQuery := fmt.Sprintf("select %s from %s %s %s %s", columnString, table, whereCondition, sortString, pageString)
+	log.Println(finalQuery)
+	rows, err := connection.DB.Query(finalQuery)
 
 	return rows, err
 }

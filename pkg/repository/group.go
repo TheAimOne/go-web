@@ -71,7 +71,7 @@ func (g *groupRepoImpl) AddMembersToGroup(groupMembers []*model.GroupMember) err
 }
 
 func (g *groupRepoImpl) GetGroupById(groupId string) (*model.Group, error) {
-	row, err := g.DB.Select(groupTableName, fmt.Sprintf(" group_id = %s ", groupId), groupColumns)
+	row, err := g.DB.Select(groupTableName, fmt.Sprintf(" where group_id = '%s' ", groupId), groupColumns)
 	if err != nil {
 		return nil, err
 	}

@@ -71,6 +71,24 @@ func GetGroupsByMemberId(request interface{}) (*model.Response, error) {
 	return util.GetResponse(groups), nil
 }
 
+func GetGroupById(request interface{}) (*model.Response, error) {
+	r := request.(*http.Request)
+	groupId := r.URL.Query().Get("groupId")
+	log.Println("groupId: ", groupId)
+
+	if groupId == "" {
+		return nil, model.NewError(400, "Invalid Group ID")
+	}
+
+	group, err := GroupServiceImpl.GetGroup(groupId)
+	if err != nil {
+		log.Println(err)
+		return nil, model.NewError(500, err.Error())
+	}
+
+	return util.GetResponse(group), nil
+}
+
 func GetGroups(request interface{}) (*model.Response, error) {
 	r := request.(*http.Request)
 	name := r.URL.Query().Get("name")

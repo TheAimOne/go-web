@@ -18,6 +18,7 @@ var columns = []string{
 type EventMemberRepository interface {
 	AddEventMember(*model.AddMemberToEventRequest) error
 	GetEventMembers(addEventMember *modelMember.GetEventMembersRequest) ([]*modelMember.EventMember, error)
+	CountEventMemberByEventIds(ids string) ([]*modelMember.CountMembersByEventId, error)
 }
 
 func NewEventMemberRepository(DB function.DBFunction) EventMemberRepository {
@@ -74,5 +75,25 @@ func (e *eventMemberRepoImpl) GetEventMembers(addEventMember *modelMember.GetEve
 		result = append(result, &e)
 	}
 
+	return result, nil
+}
+
+func (e *eventMemberRepoImpl) CountEventMemberByEventIds(ids string) ([]*modelMember.CountMembersByEventId, error) {
+	result := make([]*modelMember.CountMembersByEventId, 0)
+
+	query := ` select em.event_id, count(*) from event_member em where em.event_id in (%s)
+		group by em.event_id
+	`
+	rows, err := e.DB.SelectRaw(fmt.Sprintf(query, ids))
+
+	if err != nil {
+		return nil, constants.ErrorReadingFromDB
+	}
+
+	for rows.Next() {
+		var cm modelMember.CountMembersByEventId
+		rows.Scan(&cm.EventId, &cm.Count)
+		result = append(result, &cm)
+	}
 	return result, nil
 }

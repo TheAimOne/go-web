@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/go-web/database/function"
@@ -13,6 +12,7 @@ const tableName = "event"
 
 var columns = []string{
 	"event_id", "group_id", "created_by", "venue_id", "name", "type", "status", "params",
+	"no_of_participants", "description", "start_date_time", "end_date_time",
 }
 
 type EventRepository interface {
@@ -42,6 +42,10 @@ func (e *eventRepoImpl) CreateEvent(event *model.Event) error {
 		event.Type,
 		event.Status,
 		event.Params,
+		event.NoOfParticipants,
+		event.Description,
+		event.StartDateAndTime,
+		event.EndDateAndTime,
 	}
 
 	err := e.DB.Insert(tableName, columns, values)
@@ -63,9 +67,8 @@ func (e *eventRepoImpl) GetEventsByGroupId(groupId string) ([]*model.Event, erro
 
 	for rows.Next() {
 		var e model.Event
-		rows.Scan(&e.EventId, &e.GroupId, &e.CreatorId, &e.VenueId, &e.Name, &e.Type, &e.Status, &e.Params)
-
-		err = json.Unmarshal(e.Params.([]byte), &e.Params)
+		rows.Scan(&e.EventId, &e.GroupId, &e.CreatorId, &e.VenueId, &e.Name, &e.Type, &e.Status, &e.Params,
+			&e.NoOfParticipants, &e.Description, &e.StartDateAndTime, &e.EndDateAndTime)
 
 		if err != nil {
 			return nil, constants.ErrorParsingRecordsFromDB

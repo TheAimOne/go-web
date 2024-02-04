@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/go-web/pkg/model"
 	eventModel "github.com/go-web/pkg/model/event"
@@ -51,10 +52,16 @@ func GetEventByGroupIdHandler(request interface{}) (*model.Response, error) {
 	r := request.(*http.Request)
 
 	groupId := r.URL.Query().Get("groupId")
-	fmt.Println("groupId 1 ", groupId)
+	getCountOfParticipants := r.URL.Query().Get("getCountOfParticipants")
+	fmt.Println("groupId ", groupId)
+	fmt.Println(getCountOfParticipants)
 
 	getEventRequest := &eventModel.GetEventRequest{}
 	getEventRequest.GroupId = groupId
+	getEventRequest.GetCountOfParticipants = false
+	if strings.ToLower(getCountOfParticipants) == "true" {
+		getEventRequest.GetCountOfParticipants = true
+	}
 
 	resp, err := EventServiceImpl.GetEventsByGroupId(getEventRequest)
 
