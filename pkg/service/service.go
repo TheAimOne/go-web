@@ -76,7 +76,7 @@ type UserService interface {
 	CreateUser(user *userModel.UserBase) (*userModel.User, error)
 	GetUserByMemberId(memberId string) (*userModel.User, error)
 	GetUsers(userModel.GetUsersRequest) (*userModel.GetUsersResponse, error)
-	SearchUsers(filter model.Filter) (*model.PaginationResponse[*userModel.User], error)
+	SearchUsers(filter userModel.UserFilter) (*model.PaginationResponse[*userModel.User], error)
 }
 
 func NewUserService(userRepository repository.UserRepository) UserService {

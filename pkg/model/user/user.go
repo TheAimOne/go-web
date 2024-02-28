@@ -35,3 +35,9 @@ const (
 	ACTIVE   UserStatus = "ACTIVE"
 	INACTIVE UserStatus = "INACTIVE"
 )
+
+type UserFilter struct {
+	Filter               model.Filter `json:"filter"`
+	GroupId              string       `json:"groupId"`
+	ExcludeUserByGroupId bool         `json:"excludeUserByGroupId"`
+}

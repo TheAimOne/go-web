@@ -74,9 +74,9 @@ func (u *UserImpl) GetUsers(request model.GetUsersRequest) (*model.GetUsersRespo
 	return &response, nil
 }
 
-func (u *UserImpl) SearchUsers(filter filter_model.Filter) (*filter_model.PaginationResponse[*model.User], error) {
+func (u *UserImpl) SearchUsers(filter model.UserFilter) (*filter_model.PaginationResponse[*model.User], error) {
 
-	if filter.PageNumber < 0 || filter.PageSize < 0 {
+	if filter.Filter.PageNumber < 0 || filter.Filter.PageSize < 0 {
 		return nil, constants.ErrorPagination
 	}
 

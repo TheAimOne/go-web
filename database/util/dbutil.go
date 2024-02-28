@@ -2,6 +2,7 @@ package database_util
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/go-web/pkg/model"
@@ -23,10 +24,14 @@ func ColumnHelper(columns []string) (string, string, error) {
 	return column, values, nil
 }
 
-func AddWhereCondition(filterMap map[string]string, filter *model.Filter) string {
+func AddWhereCondition(filterMap map[string]string, filter *model.Filter, addWhereKeyword bool) string {
 	whereCondition := make([]string, 0)
 	if len(filter.Criterias) == 0 {
 		return ""
+	}
+	whereKeyword := ""
+	if addWhereKeyword {
+		whereKeyword = " WHERE "
 	}
 
 	for _, criteria := range filter.Criterias {
@@ -44,7 +49,7 @@ func AddWhereCondition(filterMap map[string]string, filter *model.Filter) string
 				}
 			case model.CONTAINS:
 				whereCondition = append(whereCondition,
-					fmt.Sprintf(" %s LIKE "+"'%%"+"%s"+"%%'", columnName, criteria.Value))
+					fmt.Sprintf(" UPPER(%s) LIKE UPPER("+"'%%"+"%s"+"%%')", columnName, criteria.Value))
 			case model.NOT_EQUALS:
 				whereCondition = append(whereCondition,
 					fmt.Sprintf(" %s <> '%s' ", columnName, criteria.Value))
@@ -54,7 +59,29 @@ func AddWhereCondition(filterMap map[string]string, filter *model.Filter) string
 	}
 
 	if filter.IsAnd {
-		return " WHERE " + strings.Join(whereCondition, " AND ")
+		return whereKeyword + strings.Join(whereCondition, " AND ")
 	}
-	return " WHERE " + strings.Join(whereCondition, " OR ")
+	return whereKeyword + strings.Join(whereCondition, " OR ")
+}
+
+func PaginationHelper(filter model.Filter) string {
+	pageString := ""
+	if filter.PageSize != 0 {
+		offset := filter.PageNumber * filter.PageSize
+		pageString = fmt.Sprintf("limit %s offset %s", strconv.FormatInt(filter.PageSize, 10),
+			strconv.FormatInt(offset, 10))
+
+	}
+	return pageString
+}
+
+func SortingHelper(filter model.Filter) string {
+	sortString := ""
+	if filter.SortKey != "" {
+		if filter.SortDirection == "" {
+			filter.SortDirection = "asc"
+		}
+		sortString = fmt.Sprintf("order by %s %s", filter.SortKey, filter.SortDirection)
+	}
+	return sortString
 }

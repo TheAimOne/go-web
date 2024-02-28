@@ -73,7 +73,7 @@ func GetUsersHandler(request interface{}) (*model.Response, error) {
 }
 
 func SearchUserHandler(request interface{}) (*model.Response, error) {
-	filterRequest, err := util.ReadJson(request, model.Filter{})
+	filterRequest, err := util.ReadJson(request, userModel.UserFilter{})
 	if err != nil {
 		return nil, model.NewError(400, err.Error())
 	}

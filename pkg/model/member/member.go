@@ -20,12 +20,18 @@ type EventMember struct {
 	DeletedTine time.Time
 }
 
+type EventMemberDetail struct {
+	EventMember
+	Email  string `json:"email"`
+	Mobile string `json:"mobile"`
+}
+
 type GetEventMembersRequest struct {
 	EventId string `json:"eventId"`
 }
 
 type GetEventMembersResponse struct {
-	Members []*EventMember `json:"data"`
+	Members []*EventMemberDetail `json:"data"`
 }
 
 type CountMembersByEventId struct {

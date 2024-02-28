@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"strconv"
+	"strings"
 
 	"github.com/go-web/database/connection"
 	database_util "github.com/go-web/database/util"
@@ -18,6 +18,7 @@ type DBFunction interface {
 	Select(table, condition string, columns []string) (*sql.Row, error)
 	SelectRaw(query string) (*sql.Rows, error)
 	SelectPaginateAndFilter(table string, filter model.Filter, columns []string, filterMap map[string]string) (*sql.Rows, error)
+	SelectPaginateAndFilterByQuery(query string, filter model.Filter, filterMap map[string]string) (*sql.Rows, error)
 }
 
 func NewDBFunction() DBFunction {
@@ -83,34 +84,48 @@ func (f *functionImpl) SelectRaw(query string) (*sql.Rows, error) {
 	return rows, err
 }
 
-func (f *functionImpl) SelectPaginateAndFilter(table string, filter model.Filter, columns []string,
-	filterMap map[string]string) (*sql.Rows, error) {
+func GetQueryByFilter(table string, filter model.Filter, columns []string,
+	filterMap map[string]string) (string, error) {
 	columnString, _, err := database_util.ColumnHelper(columns)
 	if err != nil {
-		return nil, constants.ErrorCreatingSql
+		return "", constants.ErrorCreatingSql
 	}
 
-	pageString := ""
-	if filter.PageSize != 0 {
-		offset := filter.PageNumber * filter.PageSize
-		pageString = fmt.Sprintf("limit %s offset %s", strconv.FormatInt(filter.PageSize, 10),
-			strconv.FormatInt(offset, 10))
+	finalQuery := fmt.Sprintf("select %s from %s %s %s %s",
+		columnString,
+		table,
+		database_util.AddWhereCondition(filterMap, &filter, true),
+		database_util.SortingHelper(filter),
+		database_util.PaginationHelper(filter))
+	return finalQuery, nil
+}
 
+func (f *functionImpl) SelectPaginateAndFilter(table string, filter model.Filter, columns []string,
+	filterMap map[string]string) (*sql.Rows, error) {
+
+	finalQuery, err := GetQueryByFilter(table, filter, columns, filterMap)
+	if err != nil {
+		return nil, err
 	}
 
-	sortString := ""
-
-	if filter.SortKey != "" {
-		if filter.SortDirection == "" {
-			filter.SortDirection = "asc"
-		}
-		sortString = fmt.Sprintf("order by %s %s", filter.SortKey, filter.SortDirection)
-	}
-
-	whereCondition := database_util.AddWhereCondition(filterMap, &filter)
-	finalQuery := fmt.Sprintf("select %s from %s %s %s %s", columnString, table, whereCondition, sortString, pageString)
-	log.Println(finalQuery)
 	rows, err := connection.DB.Query(finalQuery)
 
+	return rows, err
+}
+
+func (f *functionImpl) SelectPaginateAndFilterByQuery(query string, filter model.Filter, filterMap map[string]string) (*sql.Rows, error) {
+	addWhereCondition := true
+	if strings.Contains(strings.ToLower(query), "where") {
+		addWhereCondition = false
+		query = query + " AND "
+	}
+
+	finalQuery := fmt.Sprintf(" %s %s %s %s",
+		query,
+		" ( "+database_util.AddWhereCondition(filterMap, &filter, addWhereCondition)+" ) ",
+		database_util.SortingHelper(filter),
+		database_util.PaginationHelper(filter))
+	log.Println("finalQuery", finalQuery)
+	rows, err := connection.DB.Query(finalQuery)
 	return rows, err
 }

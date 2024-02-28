@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/go-web/database/function"
 	"github.com/go-web/pkg/constants"
-	filter_model "github.com/go-web/pkg/model"
 	model "github.com/go-web/pkg/model/user"
 )
 
@@ -30,7 +30,7 @@ type UserRepository interface {
 	GetUsers(page, perPage int) ([]*model.User, error)
 	AuthenticateUserByEmail(email, password string) (*model.User, error)
 	AuthenticateUserByMobile(mobile, password string) (*model.User, error)
-	SearchUsers(filter filter_model.Filter) ([]*model.User, error)
+	SearchUsers(filter model.UserFilter) ([]*model.User, error)
 }
 
 func NewMemberRepository(DB function.DBFunction) UserRepository {
@@ -128,8 +128,18 @@ func (u *UserRepoImpl) AuthenticateUserByEmail(email, password string) (*model.U
 	return &userResult, nil
 }
 
-func (u *UserRepoImpl) SearchUsers(filter filter_model.Filter) ([]*model.User, error) {
-	rows, err := u.DB.SelectPaginateAndFilter(userTableName, filter, userTableColumns, UserFilterMap)
+func (u *UserRepoImpl) SearchUsers(filter model.UserFilter) ([]*model.User, error) {
+
+	var rows *sql.Rows
+	var err error
+	if !filter.ExcludeUserByGroupId {
+		rows, err = u.DB.SelectPaginateAndFilter(userTableName, filter.Filter, userTableColumns, UserFilterMap)
+	} else {
+		query := fmt.Sprintf(`select %s from %s u WHERE u.member_id not in 
+			(select gm.member_id from group_member gm where gm.group_id = '%s')`,
+			strings.Join(userTableColumns, ", "), userTableName, filter.GroupId)
+		rows, err = u.DB.SelectPaginateAndFilterByQuery(query, filter.Filter, UserFilterMap)
+	}
 
 	if err != nil {
 		log.Println(err)

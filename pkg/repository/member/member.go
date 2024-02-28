@@ -17,7 +17,7 @@ var columns = []string{
 
 type EventMemberRepository interface {
 	AddEventMember(*model.AddMemberToEventRequest) error
-	GetEventMembers(addEventMember *modelMember.GetEventMembersRequest) ([]*modelMember.EventMember, error)
+	GetEventMembers(addEventMember *modelMember.GetEventMembersRequest) ([]*modelMember.EventMemberDetail, error)
 	CountEventMemberByEventIds(ids string) ([]*modelMember.CountMembersByEventId, error)
 }
 
@@ -44,8 +44,8 @@ func (e *eventMemberRepoImpl) AddEventMember(addEventMember *model.AddMemberToEv
 	return err
 }
 
-func (e *eventMemberRepoImpl) GetEventMembers(addEventMember *modelMember.GetEventMembersRequest) ([]*modelMember.EventMember, error) {
-	result := make([]*modelMember.EventMember, 0)
+func (e *eventMemberRepoImpl) GetEventMembers(addEventMember *modelMember.GetEventMembersRequest) ([]*modelMember.EventMemberDetail, error) {
+	result := make([]*modelMember.EventMemberDetail, 0)
 
 	query := `
 	select 
@@ -54,7 +54,9 @@ func (e *eventMemberRepoImpl) GetEventMembers(addEventMember *modelMember.GetEve
 		e.member_id,
 		e.action,
 		e.status,
-		u.name
+		u.name,
+		u.email,
+		u.mobile
 	from event_member e
 	join "user" u
 		on u.member_id = e.member_id
@@ -69,8 +71,8 @@ func (e *eventMemberRepoImpl) GetEventMembers(addEventMember *modelMember.GetEve
 	}
 
 	for rows.Next() {
-		var e modelMember.EventMember
-		rows.Scan(&e.EventId, &e.GroupId, &e.MemberId, &e.Action, &e.Status, &e.MemberName)
+		var e modelMember.EventMemberDetail
+		rows.Scan(&e.EventId, &e.GroupId, &e.MemberId, &e.Action, &e.Status, &e.MemberName, &e.Email, &e.Mobile)
 
 		result = append(result, &e)
 	}
