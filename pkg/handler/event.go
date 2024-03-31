@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-web/pkg/model"
 	eventModel "github.com/go-web/pkg/model/event"
+	"github.com/go-web/pkg/util"
 )
 
 func CreateEventHandler(request interface{}) (*model.Response, error) {
@@ -53,8 +54,7 @@ func GetEventByGroupIdHandler(request interface{}) (*model.Response, error) {
 
 	groupId := r.URL.Query().Get("groupId")
 	getCountOfParticipants := r.URL.Query().Get("getCountOfParticipants")
-	fmt.Println("groupId ", groupId)
-	fmt.Println(getCountOfParticipants)
+	log.Println("GetEventByGroupIdHandler: groupId ", groupId)
 
 	getEventRequest := &eventModel.GetEventRequest{}
 	getEventRequest.GroupId = groupId
@@ -76,4 +76,27 @@ func GetEventByGroupIdHandler(request interface{}) (*model.Response, error) {
 	}
 
 	return response.Json(), nil
+}
+
+func SearchEventHandler(request interface{}) (*model.Response, error) {
+	filterRequest, err := util.ReadJson(request, model.Filter{})
+	getCountOfParticipants := request.(*http.Request).URL.Query().Get("getCountOfParticipants")
+	log.Println("getCountOfParticipants: ", getCountOfParticipants)
+
+	eventFilterRequest := &eventModel.EventFilter{}
+	eventFilterRequest.Filter = *filterRequest
+	if strings.ToLower(getCountOfParticipants) == "true" {
+		eventFilterRequest.GetCountOfParticipants = true
+	}
+	if err != nil {
+		return nil, model.NewError(400, err.Error())
+	}
+	resp, err := EventServiceImpl.SearchEvent(eventFilterRequest)
+
+	if err != nil {
+		log.Println("Error: ", err)
+		return nil, model.NewError(500, err.Error())
+	}
+
+	return util.GetResponse(resp), nil
 }
