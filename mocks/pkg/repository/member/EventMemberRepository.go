@@ -28,20 +28,46 @@ func (_m *EventMemberRepository) AddEventMember(_a0 *model.AddMemberToEventReque
 	return r0
 }
 
+// CountEventMemberByEventIds provides a mock function with given fields: ids
+func (_m *EventMemberRepository) CountEventMemberByEventIds(ids string) ([]*modelmember.CountMembersByEventId, error) {
+	ret := _m.Called(ids)
+
+	var r0 []*modelmember.CountMembersByEventId
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) ([]*modelmember.CountMembersByEventId, error)); ok {
+		return rf(ids)
+	}
+	if rf, ok := ret.Get(0).(func(string) []*modelmember.CountMembersByEventId); ok {
+		r0 = rf(ids)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*modelmember.CountMembersByEventId)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(ids)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetEventMembers provides a mock function with given fields: addEventMember
-func (_m *EventMemberRepository) GetEventMembers(addEventMember *modelmember.GetEventMembersRequest) ([]*modelmember.EventMember, error) {
+func (_m *EventMemberRepository) GetEventMembers(addEventMember *modelmember.GetEventMembersRequest) ([]*modelmember.EventMemberDetail, error) {
 	ret := _m.Called(addEventMember)
 
-	var r0 []*modelmember.EventMember
+	var r0 []*modelmember.EventMemberDetail
 	var r1 error
-	if rf, ok := ret.Get(0).(func(*modelmember.GetEventMembersRequest) ([]*modelmember.EventMember, error)); ok {
+	if rf, ok := ret.Get(0).(func(*modelmember.GetEventMembersRequest) ([]*modelmember.EventMemberDetail, error)); ok {
 		return rf(addEventMember)
 	}
-	if rf, ok := ret.Get(0).(func(*modelmember.GetEventMembersRequest) []*modelmember.EventMember); ok {
+	if rf, ok := ret.Get(0).(func(*modelmember.GetEventMembersRequest) []*modelmember.EventMemberDetail); ok {
 		r0 = rf(addEventMember)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*modelmember.EventMember)
+			r0 = ret.Get(0).([]*modelmember.EventMemberDetail)
 		}
 	}
 

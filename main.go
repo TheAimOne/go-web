@@ -108,6 +108,18 @@ func main() {
 		Handler: handler.CreateAuthenticationHandler,
 	})
 
+	// Message module
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/groups/events/messages",
+		Method:  "POST",
+		Handler: handler.CreateMessageHandler,
+	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/groups/events/messages",
+		Method:  "GET",
+		Handler: handler.RetrieveMessageHandler,
+	})
+
 	connection.InitDB()
 
 	handler.InititializeService()

@@ -106,6 +106,32 @@ func (_m *DBFunction) SelectPaginateAndFilter(table string, filter model.Filter,
 	return r0, r1
 }
 
+// SelectPaginateAndFilterByQuery provides a mock function with given fields: query, filter, filterMap
+func (_m *DBFunction) SelectPaginateAndFilterByQuery(query string, filter model.Filter, filterMap map[string]string) (*sql.Rows, error) {
+	ret := _m.Called(query, filter, filterMap)
+
+	var r0 *sql.Rows
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string, model.Filter, map[string]string) (*sql.Rows, error)); ok {
+		return rf(query, filter, filterMap)
+	}
+	if rf, ok := ret.Get(0).(func(string, model.Filter, map[string]string) *sql.Rows); ok {
+		r0 = rf(query, filter, filterMap)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*sql.Rows)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string, model.Filter, map[string]string) error); ok {
+		r1 = rf(query, filter, filterMap)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // SelectRaw provides a mock function with given fields: query
 func (_m *DBFunction) SelectRaw(query string) (*sql.Rows, error) {
 	ret := _m.Called(query)

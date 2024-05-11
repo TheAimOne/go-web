@@ -105,3 +105,17 @@ alter table event ADD column "description" varchar(1000) NOT NULL;
 
 alter table event ADD column "start_date_time" timestamp with time zone;
 alter table event add column "end_date_time" timestamp with time zone;
+
+create table if not exists message (
+	id SERIAL primary KEY,
+	member_id UUID NOT NULL,
+    name VARCHAR(255) NOT NULL,
+	group_id UUID NOT NULL,
+    event_id UUID NOT NULL,
+	content TEXT NOT NULL,
+	create_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    delete_time TIMESTAMP
+);
+
+CREATE INDEX message_event_id ON message(event_id);

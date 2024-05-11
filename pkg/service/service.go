@@ -6,6 +6,7 @@ import (
 	eventModel "github.com/go-web/pkg/model/event"
 	groupModel "github.com/go-web/pkg/model/group"
 	memberModel "github.com/go-web/pkg/model/member"
+	messageModel "github.com/go-web/pkg/model/message"
 	userModel "github.com/go-web/pkg/model/user"
 	venueModel "github.com/go-web/pkg/model/venue"
 	"github.com/go-web/pkg/repository"
@@ -83,4 +84,9 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 	return &UserImpl{
 		userRepository: userRepository,
 	}
+}
+
+type MessageService interface {
+	CreateMessage(m *messageModel.SendMessageReq) (*messageModel.SendMessageResp, error)
+	RetrieveMessageForEvent(m *messageModel.RetrieveMessageReq) (*messageModel.RetrieveMessageResp, error)
 }
