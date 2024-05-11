@@ -26,12 +26,12 @@ func ColumnHelper(columns []string) (string, string, error) {
 
 func AddWhereCondition(filterMap map[string]string, filter *model.Filter, addWhereKeyword bool) string {
 	whereCondition := make([]string, 0)
-	if len(filter.Criterias) == 0 {
-		return ""
-	}
 	whereKeyword := ""
 	if addWhereKeyword {
 		whereKeyword = " WHERE "
+	}
+	if len(filter.Criterias) == 0 {
+		return whereKeyword + " 1=1 "
 	}
 
 	for _, criteria := range filter.Criterias {
@@ -53,6 +53,10 @@ func AddWhereCondition(filterMap map[string]string, filter *model.Filter, addWhe
 			case model.NOT_EQUALS:
 				whereCondition = append(whereCondition,
 					fmt.Sprintf(" %s <> '%s' ", columnName, criteria.Value))
+			case model.GREATER_THAN:
+				whereCondition = append(whereCondition, fmt.Sprintf(" %s > '%s' ", columnName, criteria.Value))
+			case model.LESS_THAN:
+				whereCondition = append(whereCondition, fmt.Sprintf(" %s < '%s' ", columnName, criteria.Value))
 			}
 		}
 

@@ -34,6 +34,11 @@ func main() {
 		Method:  "GET",
 		Handler: handler.GetEventMembers,
 	})
+	s.AddHandler(endpoint.Endpoint{
+		Path:    "/events/search",
+		Method:  "POST",
+		Handler: handler.SearchEventHandler,
+	})
 
 	// Venues
 	s.AddHandler(endpoint.Endpoint{

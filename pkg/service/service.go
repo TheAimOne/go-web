@@ -27,6 +27,7 @@ func NewAuthService(userRepository repository.UserRepository) AuthService {
 type EventService interface {
 	CreateEvent(eventRequest *eventModel.Event) (*eventModel.EventResponse, error)
 	GetEventsByGroupId(eventRequest *eventModel.GetEventRequest) (*eventModel.GetEventResponse, error)
+	SearchEvent(searchEventRequest *eventModel.EventFilter) (*eventModel.GetEventResponse, error)
 }
 
 func NewEventService(eventRepository repository.EventRepository, eventMemberService EventMemberService) EventService {

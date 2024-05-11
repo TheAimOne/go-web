@@ -3,6 +3,7 @@ package model
 import (
 	"time"
 
+	model "github.com/go-web/pkg/model"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -23,6 +24,8 @@ type Event struct {
 	Type                   EventType   `json:"type"`
 	Status                 string      `json:"status"`
 	Params                 interface{} `json:"params"`
+	TotalCost              float64     `json:"totalCost"`
+	Currency               string      `json:"currency"`
 	NoOfParticipants       int64       `json:"noOfParticipants"`
 	NoOfJoinedParticipants int64       `json:"noOfJoinedParticipants"`
 	StartDateAndTime       time.Time   `json:"startDateAndTime"`
@@ -32,7 +35,13 @@ type Event struct {
 	DeletedTine            time.Time
 }
 
-type EventDetailResponse struct {
+type EventDetail struct {
+	Event
+	CostPerPerson float32 `json:"costPerPerson"`
+	VenueName     string  `json:"venueName"`
+	VenueAddress  string  `json:"venueAddress"`
+	Latitude      int64   `json:"latitude"`
+	Longitude     int64   `json:"longitude"`
 }
 
 type EventResponse struct {
@@ -46,7 +55,12 @@ type GetEventRequest struct {
 }
 
 type GetEventResponse struct {
-	Data []*Event `json:"data"`
+	Data []*EventDetail `json:"data"`
+}
+
+type EventFilter struct {
+	Filter                 model.Filter
+	GetCountOfParticipants bool
 }
 
 type AddMemberToEventRequest struct {

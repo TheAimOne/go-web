@@ -38,7 +38,7 @@ func (e *eventImpl) CreateEvent(requestEvent *eventModel.Event) (*eventModel.Eve
 	}, nil
 }
 
-func GetCountOfEventParticipants(e *eventImpl, result []*eventModel.Event) (map[string]int64, error) {
+func GetCountOfEventParticipants(e *eventImpl, result []*eventModel.EventDetail) (map[string]int64, error) {
 	var ids []string
 	for _, event := range result {
 		ids = append(ids, event.EventId.String())
@@ -66,11 +66,17 @@ func (e *eventImpl) GetEventsByGroupId(eventRequest *eventModel.GetEventRequest)
 		return nil, err
 	}
 
+	return getEventListResponseAndCountOfParticipants(e, eventRequest.GetCountOfParticipants, result)
+}
+
+func getEventListResponseAndCountOfParticipants(e *eventImpl, GetCountOfParticipants bool, result []*eventModel.EventDetail) (*eventModel.GetEventResponse, error) {
 	response := &eventModel.GetEventResponse{}
-
 	response.Data = result
+	if GetCountOfParticipants && len(result) > 0 {
+		for _, event := range result {
+			event.CostPerPerson = float32(event.TotalCost) / float32(event.NoOfParticipants)
+		}
 
-	if eventRequest.GetCountOfParticipants && len(result) > 0 {
 		eventIdCountMap, err := GetCountOfEventParticipants(e, result)
 		if err != nil {
 			return nil, err
@@ -81,6 +87,15 @@ func (e *eventImpl) GetEventsByGroupId(eventRequest *eventModel.GetEventRequest)
 			}
 		}
 	}
-
 	return response, nil
+}
+
+func (e *eventImpl) SearchEvent(searchEventRequest *eventModel.EventFilter) (*eventModel.GetEventResponse, error) {
+	result, err := e.EventRepository.GetEventsByFilter(&searchEventRequest.Filter)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return getEventListResponseAndCountOfParticipants(e, searchEventRequest.GetCountOfParticipants, result)
 }

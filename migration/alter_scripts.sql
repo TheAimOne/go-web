@@ -105,6 +105,7 @@ alter table event ADD column "description" varchar(1000) NOT NULL;
 
 alter table event ADD column "start_date_time" timestamp with time zone;
 alter table event add column "end_date_time" timestamp with time zone;
+<<<<<<< HEAD
 
 create table if not exists message (
 	id SERIAL primary KEY,
@@ -119,3 +120,8 @@ create table if not exists message (
 );
 
 CREATE INDEX message_event_id ON message(event_id);
+
+alter table event add column "total_cost" int;
+alter table event add column "currency" varchar(10);
+alter table "event" alter column start_date_time type timestamp;
+alter table "event" alter column end_date_time type timestamp;

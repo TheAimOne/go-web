@@ -122,7 +122,7 @@ func (f *functionImpl) SelectPaginateAndFilterByQuery(query string, filter model
 
 	finalQuery := fmt.Sprintf(" %s %s %s %s",
 		query,
-		" ( "+database_util.AddWhereCondition(filterMap, &filter, addWhereCondition)+" ) ",
+		database_util.AddWhereCondition(filterMap, &filter, addWhereCondition),
 		database_util.SortingHelper(filter),
 		database_util.PaginationHelper(filter))
 	log.Println("finalQuery", finalQuery)

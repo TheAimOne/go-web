@@ -22,6 +22,8 @@ const (
 	NOT_CONTAINS Operator = "NOT_CONTAINS"
 	IN           Operator = "IN"
 	NOT_IN       Operator = "NOT_IN"
+	GREATER_THAN Operator = "GREATER_THAN"
+	LESS_THAN    Operator = "LESS_THAN"
 )
 
 type Criteria struct {
