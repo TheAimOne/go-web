@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -9,6 +10,10 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	handler "github.com/go-web/pkg/handler"
+	"github.com/go-web/pkg/model"
+	authModel "github.com/go-web/pkg/model/auth"
 )
 
 var (
@@ -30,51 +35,51 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		rw.Header().Set("Access-Control-Allow-Methods", "*")
 		rw.Header().Set("Content-Type", "application/json")
 
-		if r.URL.Path == "/user/authenticate" || r.Method == "OPTIONS" {
+		if r.URL.Path == "/user/authenticate" || r.URL.Path == "/user/signup" || r.URL.Path == "/user/token" || r.Method == "OPTIONS" {
 			next.ServeHTTP(rw, r)
 			return
 		}
 
 		log.Println("Authentication testing", r.Header.Get("x-auth"))
 
-		// auth, err := ExtractAuthToken(r.Header.Get("x-auth"))
+		auth := r.Header.Get("Authorization")
 
-		// if err != nil {
-		// 	fmt.Println("dinga error", err)
-		// 	b, _ := json.Marshal(model.Error{
-		// 		Message: "Not Authenticated",
-		// 		Status:  400,
-		// 	})
-		// 	rw.Header().Set("Access-Control-Allow-Origin", "*")
-		// 	rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth")
-		// 	rw.Header().Set("Access-Control-Allow-Methods", "*")
-		// 	rw.Header().Set("Content-Type", "application/json")
-		// 	rw.WriteHeader(http.StatusForbidden)
-		// 	rw.Write([]byte(b))
-		// 	return
-		// }
+		if auth == "" {
+			fmt.Println("Auth error", auth)
+			b, _ := json.Marshal(model.Error{
+				Message: "Access token not present",
+				Status:  401,
+			})
+			rw.Header().Set("Access-Control-Allow-Origin", "*")
+			rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth")
+			rw.Header().Set("Access-Control-Allow-Methods", "*")
+			rw.Header().Set("Content-Type", "application/json")
+			rw.WriteHeader(http.StatusUnauthorized)
+			rw.Write([]byte(b))
+			return
+		}
 
-		// isValid := CheckTokenValidity(auth)
-		// if !isValid {
-		// 	fmt.Println("Not Valid token", err)
-		// 	b, _ := json.Marshal(model.Error{
-		// 		Message: "Invalid Token",
-		// 		Status:  400,
-		// 	})
-		// 	rw.Header().Set("Access-Control-Allow-Origin", "*")
-		// 	rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth")
-		// 	rw.Header().Set("Access-Control-Allow-Methods", "*")
-		// 	rw.Header().Set("Content-Type", "application/json")
-		// 	rw.WriteHeader(http.StatusForbidden)
-		// 	rw.Write([]byte(b))
-		// 	return
-		// }
+		isValid := handler.AuthServiceImpl.CheckJwtAccessTokenValidity(auth)
+		if !isValid {
+			fmt.Println("Not Valid token")
+			b, _ := json.Marshal(model.Error{
+				Message: "Invalid Token",
+				Status:  401,
+			})
+			rw.Header().Set("Access-Control-Allow-Origin", "*")
+			rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth")
+			rw.Header().Set("Access-Control-Allow-Methods", "*")
+			rw.Header().Set("Content-Type", "application/json")
+			rw.WriteHeader(http.StatusUnauthorized)
+			rw.Write([]byte(b))
+			return
+		}
 
 		next.ServeHTTP(rw, r)
 	})
 }
 
-func CreateAuthToken(auth *Auth) (string, error) {
+func CreateAuthToken(auth *authModel.Auth) (string, error) {
 	if auth.UserId == "" {
 		return "", ErrorCreatingToken
 	}
@@ -86,8 +91,8 @@ func CreateAuthToken(auth *Auth) (string, error) {
 	return token, nil
 }
 
-func ExtractAuthToken(token string) (*Auth, error) {
-	auth := &Auth{}
+func ExtractAuthToken(token string) (*authModel.Auth, error) {
+	auth := &authModel.Auth{}
 
 	tokenDecoded, err := base64.StdEncoding.DecodeString(token)
 	if err != nil {
@@ -112,10 +117,10 @@ func ExtractAuthToken(token string) (*Auth, error) {
 	return auth, nil
 }
 
-func CheckTokenValidity(auth *Auth) bool {
+func CheckTokenValidity(auth *authModel.Auth) bool {
 	createAt := time.Unix(auth.CreatedAt, 0)
 
-	if time.Now().Sub(createAt).Minutes() > ExpiryTimeInMinutes {
+	if time.Since(createAt).Minutes() > ExpiryTimeInMinutes {
 		log.Printf("Token expired for %s\n", auth.UserId)
 		return false
 	}

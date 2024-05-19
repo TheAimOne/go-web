@@ -3,7 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 
@@ -16,7 +16,7 @@ func CreateEventMemberHandler(request interface{}) (*model.Response, error) {
 
 	r := request.(*http.Request)
 
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		// TODO send error
 		log.Printf("Error reading body: %v", err)

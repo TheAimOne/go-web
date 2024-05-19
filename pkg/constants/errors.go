@@ -17,9 +17,12 @@ var (
 
 // Service Errors
 var (
-	ErrorAuthenticating      = errors.New("error in authentication")
-	ErrorCreatingToken       = errors.New("error creating token")
-	ErrorAuthTypeNotProvided = errors.New("auth type not provided")
+	ErrorAuthenticating          = errors.New("Error in authentication")
+	ErrorCreatingToken           = errors.New("Error creating token")
+	ErrorAuthTypeNotProvided     = errors.New("Auth type not provided")
+	ErrorRefreshTokenNotProvided = errors.New("Refresh token not provided")
+	ErrorRefreshTokenExpired     = errors.New("Refresh token expired")
+	ErrorInvalidDetails          = errors.New("Invalid Details")
 
 	ErrorParsingParams = errors.New("invalid Params")
 	ErrorCreatingEvent = errors.New("error creating event")

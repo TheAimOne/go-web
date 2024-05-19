@@ -108,9 +108,15 @@ func main() {
 
 	// Authentication
 	s.AddHandler(endpoint.Endpoint{
-		Path:    "/user/authenticate",
-		Method:  "POST",
-		Handler: handler.CreateAuthenticationHandler,
+		Path:                  "/user/authenticate",
+		Method:                "POST",
+		ResponseWriterHandler: handler.CreateAuthenticationHandler,
+	})
+
+	s.AddHandler(endpoint.Endpoint{
+		Path:                  "/user/token",
+		Method:                "POST",
+		ResponseWriterHandler: handler.GenerateAuthTokenHandler,
 	})
 
 	// Message module

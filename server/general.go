@@ -13,12 +13,12 @@ import (
 )
 
 type Server struct {
-	endpoints map[string]endpoint.Handler
+	endpoints map[string]endpoint.Endpoint
 }
 
 func NewServer() Server {
 	server := Server{}
-	server.endpoints = make(map[string]endpoint.Handler, 0)
+	server.endpoints = make(map[string]endpoint.Endpoint, 0)
 	return server
 }
 
@@ -33,7 +33,7 @@ func (s *Server) AddHandler(e endpoint.Endpoint) {
 
 	key := s.CreateKey(e.Path, e.Method)
 
-	s.endpoints[key] = e.Handler
+	s.endpoints[key] = e
 }
 
 func (s *Server) CreateKey(path string, method string) string {
@@ -64,10 +64,16 @@ func (s *Server) Handle() http.Handler {
 
 		key := s.CreateKey(r.URL.Path, r.Method)
 
-		handler, ok := s.endpoints[key]
+		endpoint, ok := s.endpoints[key]
 		log.Println("ok : ", ok)
 		if ok {
-			response, err := handler(r)
+			var response *model.Response
+			var err error
+			if endpoint.ResponseWriterHandler != nil {
+				response, err = endpoint.ResponseWriterHandler(r, rw)
+			} else {
+				response, err = endpoint.Handler(r)
+			}
 
 			if err != nil {
 				s.WriteError(err, rw)

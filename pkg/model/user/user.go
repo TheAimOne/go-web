@@ -20,6 +20,21 @@ type User struct {
 	Status UserStatus `json:"status"`
 }
 
+type DeviceType string
+
+const (
+	MOBILE DeviceType = "MOBILE"
+)
+
+type UserSession struct {
+	SessionId    uuid.UUID  `json:"sessionId"`
+	UserId       uuid.UUID  `json:"userId"`
+	SessionToken string     `json:"sessionToken"`
+	DeviceId     string     `json:"deviceId"`
+	DeviceType   DeviceType `json:"deviceType"`
+	ExpiryTime   int        `json:"expiryTime"`
+}
+
 type GetUsersRequest struct {
 	Page    int `json:"page"`
 	PerPage int `json:"perPage"`

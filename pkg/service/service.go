@@ -1,6 +1,8 @@
 package service
 
 import (
+	"time"
+
 	model "github.com/go-web/pkg/model"
 	authModel "github.com/go-web/pkg/model/auth"
 	eventModel "github.com/go-web/pkg/model/event"
@@ -11,11 +13,19 @@ import (
 	venueModel "github.com/go-web/pkg/model/venue"
 	"github.com/go-web/pkg/repository"
 	"github.com/go-web/pkg/repository/member"
+	"github.com/golang-jwt/jwt"
 	uuid "github.com/satori/go.uuid"
 )
 
 type AuthService interface {
 	Authenticate(authRequest *authModel.AuthRequest) (*authModel.AuthResponse, error)
+	CreateJwtAuthToken(userId string) (string, time.Time, error)
+	CreateRefreshToken(session *authModel.Session) (string, time.Time, error)
+	ParseAccessToken(accessToken string) *jwt.Token
+	ParseRefreshToken(refreshToken string) *jwt.Token
+	CheckJwtAccessTokenValidity(token string) bool
+	CheckJwtRefreshTokenValidity(token string) bool
+	GenerateToken(authRequest authModel.AuthRequest) (*authModel.AuthData, error)
 }
 
 func NewAuthService(userRepository repository.UserRepository) AuthService {

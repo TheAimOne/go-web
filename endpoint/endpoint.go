@@ -1,17 +1,27 @@
 package endpoint
 
-import "github.com/go-web/pkg/model"
+import (
+	"net/http"
+
+	"github.com/go-web/pkg/model"
+)
 
 type Handler func(i interface{}) (*model.Response, error)
+type ResponseWriterHandler func(i interface{}, rw http.ResponseWriter) (*model.Response, error)
+
+type GenericHandler interface {
+	Handler | ResponseWriterHandler
+}
 
 type Endpoints struct {
 	endpoints []Endpoint
 }
 
 type Endpoint struct {
-	Method  string
-	Handler Handler
-	Path    string
+	Method                string
+	Handler               Handler
+	ResponseWriterHandler ResponseWriterHandler
+	Path                  string
 }
 
 var endpoint Endpoints
