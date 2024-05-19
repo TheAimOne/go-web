@@ -125,3 +125,15 @@ alter table event add column "total_cost" int;
 alter table event add column "currency" varchar(10);
 alter table "event" alter column start_date_time type timestamp;
 alter table "event" alter column end_date_time type timestamp;
+create table if not exists "user_session"(
+    session_id uuid not null,
+    user_id uuid not null,
+    session_token varchar(500) not null,
+    device_id varchar(500) not null,
+    device_type varchar(255) not null,
+    expiry_time TIMESTAMP NOT NULL,
+  	primary key (session_id),
+  	foreign key (user_id) references "user"(member_id)  
+);
+
+ALTER TABLE "event" ALTER COLUMN venue_id DROP NOT NULL;

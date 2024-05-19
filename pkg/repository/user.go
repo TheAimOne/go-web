@@ -14,6 +14,7 @@ import (
 const userTableName = `"user"`
 
 var userTableColumns = []string{"member_id", "name", "short_name", "email", "mobile", "status"}
+var userSessionTableColumns = []string{"session_id", "user_id", "session_token", "device_id", "device_type", "expiry_time"}
 
 var UserFilterMap = map[string]string{
 	"memberId":  "member_id",
@@ -31,6 +32,8 @@ type UserRepository interface {
 	AuthenticateUserByEmail(email, password string) (*model.User, error)
 	AuthenticateUserByMobile(mobile, password string) (*model.User, error)
 	SearchUsers(filter model.UserFilter) ([]*model.User, error)
+	GetSessionByUserIdAndDeviceId(userId string, deviceId string) ([]*model.UserSession, error)
+	CreateUserDeviceSession(userSession *model.UserSession) error
 }
 
 func NewMemberRepository(DB function.DBFunction) UserRepository {
@@ -147,4 +150,40 @@ func (u *UserRepoImpl) SearchUsers(filter model.UserFilter) ([]*model.User, erro
 	}
 
 	return getUserListFromRows(rows), nil
+}
+
+func (u *UserRepoImpl) GetSessionByUserIdAndDeviceId(userId string, deviceId string) ([]*model.UserSession, error) {
+	query := fmt.Sprintf(`select %s from user_session us WHERE us.userId = %s and us.deviceId = %s `,
+		strings.Join(userSessionTableColumns, ","), userId, deviceId)
+	rows, err := u.DB.SelectRaw(query)
+
+	if err != nil {
+		log.Println(err)
+		return nil, constants.ErrorReadingFromDB
+	}
+	result := make([]*model.UserSession, 0)
+
+	for rows.Next() {
+		var userSessionResult model.UserSession
+		rows.Scan(&userSessionResult.SessionId, &userSessionResult.UserId, &userSessionResult.SessionToken,
+			&userSessionResult.DeviceId, &userSessionResult.DeviceType)
+
+		result = append(result, &userSessionResult)
+	}
+	return result, nil
+}
+
+func (u *UserRepoImpl) CreateUserDeviceSession(userSession *model.UserSession) error {
+	values := []interface{}{
+		userSession.SessionId,
+		userSession.UserId,
+		userSession.SessionToken,
+		userSession.DeviceId,
+		userSession.DeviceType,
+		userSession.ExpiryTime,
+	}
+
+	err := u.DB.Insert("user_session", columns, values)
+
+	return err
 }

@@ -21,7 +21,7 @@ var eventDetailQuery = `
 	select e.id, e.event_id, e.group_id, e.venue_id, e.created_by, e.name, e.type, e.status,  
 	e.total_cost, e.currency, e.no_of_participants, e.description, e.start_date_time, 
 	e.end_date_time, v.name "venueName", v.address "venueAddress", v.latitude, v.longitude
-	from "event" e join venue v 
+	from "event" e left outer join venue v 
 	on e.venue_id = v.id `
 
 var eventFilterMap = map[string]string{
