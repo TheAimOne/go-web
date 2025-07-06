@@ -64,6 +64,32 @@ func (_m *EventService) GetEventsByGroupId(eventRequest *model.GetEventRequest) 
 	return r0, r1
 }
 
+// SearchEvent provides a mock function with given fields: searchEventRequest
+func (_m *EventService) SearchEvent(searchEventRequest *model.EventFilter) (*model.GetEventResponse, error) {
+	ret := _m.Called(searchEventRequest)
+
+	var r0 *model.GetEventResponse
+	var r1 error
+	if rf, ok := ret.Get(0).(func(*model.EventFilter) (*model.GetEventResponse, error)); ok {
+		return rf(searchEventRequest)
+	}
+	if rf, ok := ret.Get(0).(func(*model.EventFilter) *model.GetEventResponse); ok {
+		r0 = rf(searchEventRequest)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*model.GetEventResponse)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(*model.EventFilter) error); ok {
+		r1 = rf(searchEventRequest)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // NewEventService creates a new instance of EventService. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewEventService(t interface {

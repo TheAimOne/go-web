@@ -7,6 +7,7 @@ import (
 	"github.com/go-web/database/connection"
 	"github.com/go-web/endpoint"
 	"github.com/go-web/pkg/handler"
+	redis "github.com/go-web/redis/connection"
 	"github.com/go-web/server"
 )
 
@@ -126,6 +127,7 @@ func main() {
 	})
 
 	connection.InitDB()
+	redis.Init()
 
 	handler.InititializeService()
 

@@ -105,7 +105,6 @@ alter table event ADD column "description" varchar(1000) NOT NULL;
 
 alter table event ADD column "start_date_time" timestamp with time zone;
 alter table event add column "end_date_time" timestamp with time zone;
-<<<<<<< HEAD
 
 create table if not exists message (
 	id SERIAL primary KEY,

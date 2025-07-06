@@ -61,7 +61,6 @@ func (e *eventImpl) GetEventsByGroupId(eventRequest *eventModel.GetEventRequest)
 	groupId := eventRequest.GroupId
 
 	result, err := e.EventRepository.GetEventsByGroupId(groupId)
-
 	if err != nil {
 		return nil, err
 	}
