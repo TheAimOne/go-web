@@ -1,6 +1,6 @@
 package constants
 
-var VenueColumns = []string{"venue_id", "name", "address", "latitude", "longitude", "opening_time", "closing_time", "rating"}
+var VenueColumns = []string{"id", "name", "address", "latitude", "longitude", "opening_time", "closing_time", "rating"}
 
 const EventDetailQuery = `
 select e.id, e.event_id, e.group_id, e.venue_id, e.created_by, e.name, e.type, e.status,  
